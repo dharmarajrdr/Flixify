@@ -1,6 +1,7 @@
 package com.flixify.backend.util;
 
 import com.flixify.backend.custom_exceptions.AccountNotFound;
+import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.UserNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDto> userNotFound(UserNotFound e) {
 
         return NOT_FOUND(e);
+    }
+
+    @ExceptionHandler(PermissionDenied.class)
+    public ResponseEntity<ResponseDto> permissionDenied(PermissionDenied e) {
+
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
     }
 }
