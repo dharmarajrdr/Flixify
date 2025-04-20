@@ -1,6 +1,7 @@
 package com.flixify.backend.util;
 
 import com.flixify.backend.custom_exceptions.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,5 +49,13 @@ public class GlobalExceptionHandler {
 
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseDto> dataIntegrityViolationException(DataIntegrityViolationException e) {
+
+        String message = DataIntegrityViolationExceptionParser.parse(e);
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, message);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDto);
     }
 }
