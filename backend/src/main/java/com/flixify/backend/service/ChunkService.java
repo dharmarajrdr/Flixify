@@ -1,9 +1,11 @@
 package com.flixify.backend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.UserNotFound;
+import com.flixify.backend.dto.response.ChunkDto;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.custom_exceptions.VideoNotExist;
@@ -22,9 +24,14 @@ public class ChunkService {
         this.videoService = videoService;
     }
 
-    public List<Chunk> getAllChunks(Integer userId, Integer videoId) throws UserNotFound, VideoNotExist, PermissionDenied {
+    public List<ChunkDto> getAllChunks(Integer userId, Integer videoId) throws UserNotFound, VideoNotExist, PermissionDenied {
 
         Video video = videoService.getVideo(userId, videoId);
-        return chunkRepository.findByVideo(video);
+        List<Chunk> chunks = chunkRepository.findByVideo(video);
+        List<ChunkDto> chunkDtoList = new ArrayList<>();
+        for(Chunk chunk: chunks) {
+            chunkDtoList.add(new ChunkDto(chunk));
+        }
+        return chunkDtoList;
     }
 }
