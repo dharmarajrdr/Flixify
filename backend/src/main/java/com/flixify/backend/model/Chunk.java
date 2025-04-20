@@ -1,9 +1,6 @@
 package com.flixify.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,12 +15,16 @@ public class Chunk extends Auditable {
     private Video video;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
     private Resolution resolution;
 
+    @Column(nullable = false)
     private Double startTime;
 
+    @Column(nullable = false)
     private Double endTime;
 
+    @Column(nullable = false)
     private String fileId;    // UUID = Name of the file
 
     @OneToOne
