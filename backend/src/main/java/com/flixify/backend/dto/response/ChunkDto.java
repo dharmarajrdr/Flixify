@@ -3,9 +3,13 @@ package com.flixify.backend.dto.response;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.ChunkStatus;
 import com.flixify.backend.model.Resolution;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChunkDto {
 
     private Integer chunkId;
@@ -29,4 +33,5 @@ public class ChunkDto {
         this.chunkStatus = chunk.getChunkStatus();
         this.size = chunk.getSize();
     }
+
 }
