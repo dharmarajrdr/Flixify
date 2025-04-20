@@ -7,6 +7,7 @@ import com.flixify.backend.dto.request.AddUserDto;
 import com.flixify.backend.model.Account;
 import com.flixify.backend.model.User;
 import com.flixify.backend.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -19,6 +20,7 @@ public class UserService {
         this.accountService = accountService;
     }
 
+    @Transactional
     public User addUser(AddUserDto addUserDto) {
 
         String userName = addUserDto.getUserName();
