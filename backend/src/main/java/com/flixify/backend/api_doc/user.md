@@ -1,5 +1,3 @@
-### 📄 **API Documentation**
-
 **1. Add a New User**
 
 - **Endpoint**: `POST /user`

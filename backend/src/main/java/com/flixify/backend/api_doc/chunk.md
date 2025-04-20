@@ -1,5 +1,3 @@
-### 📄 **API Documentation**
-
 **1. Get All Chunks of a Video**
 
 - **Endpoint**: `GET /videos/{videoId}/chunks`

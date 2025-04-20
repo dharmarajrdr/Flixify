@@ -1,5 +1,3 @@
-### 📄 **API Documentation**
-
 **1. Get All Videos for a User**
 
 - **Endpoint**: `GET /videos`
