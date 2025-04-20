@@ -14,8 +14,8 @@ import com.flixify.backend.repository.ChunkRepository;
 @Service
 public class ChunkService {
 
-    private ChunkRepository chunkRepository;
-    private VideoService videoService;
+    private final ChunkRepository chunkRepository;
+    private final VideoService videoService;
 
     public ChunkService(ChunkRepository chunkRepository, VideoService videoService) {
         this.chunkRepository = chunkRepository;

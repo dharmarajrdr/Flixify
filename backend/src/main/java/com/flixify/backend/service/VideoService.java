@@ -14,8 +14,8 @@ import java.util.List;
 @Service
 public class VideoService {
 
-    private VideoRepository videoRepository;
-    private UserService userService;
+    private final VideoRepository videoRepository;
+    private final UserService userService;
 
     public VideoService(VideoRepository videoRepository, UserService userService) {
         this.videoRepository = videoRepository;

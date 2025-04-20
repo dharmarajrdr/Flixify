@@ -2,7 +2,6 @@ package com.flixify.backend.service;
 
 import org.springframework.stereotype.Service;
 
-import com.flixify.backend.custom_exceptions.AccountNotFound;
 import com.flixify.backend.custom_exceptions.UserNotFound;
 import com.flixify.backend.dto.request.AddUserDto;
 import com.flixify.backend.model.Account;
@@ -12,15 +11,15 @@ import com.flixify.backend.repository.UserRepository;
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private AccountService accountService;
+    private final UserRepository userRepository;
+    private final AccountService accountService;
 
     public UserService(UserRepository userRepository, AccountService accountService) {
         this.userRepository = userRepository;
         this.accountService = accountService;
     }
 
-    public User addUser(AddUserDto addUserDto) throws AccountNotFound {
+    public User addUser(AddUserDto addUserDto) {
 
         String userName = addUserDto.getUserName();
         String displayName = addUserDto.getDisplayName();
