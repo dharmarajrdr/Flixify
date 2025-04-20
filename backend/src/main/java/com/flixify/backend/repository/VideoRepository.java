@@ -7,9 +7,12 @@ import org.springframework.stereotype.Repository;
 import com.flixify.backend.model.Video;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
 
     public List<Video> findByOwner(User user);
+
+    public Optional<Video> findByIdAndOwner(Integer videoId, User owner);
 }
