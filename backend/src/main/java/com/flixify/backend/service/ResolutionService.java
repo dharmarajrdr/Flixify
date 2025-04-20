@@ -3,7 +3,9 @@ package com.flixify.backend.service;
 import com.flixify.backend.custom_exceptions.ResolutionNotFound;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.repository.ResolutionRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ResolutionService {
 
     private ResolutionRepository resolutionRepository;

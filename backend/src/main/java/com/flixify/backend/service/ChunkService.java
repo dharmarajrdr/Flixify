@@ -3,11 +3,12 @@ package com.flixify.backend.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flixify.backend.custom_exceptions.InvalidChunkStatus;
 import com.flixify.backend.dto.request.AddChunkDto;
 import com.flixify.backend.dto.response.ChunkDto;
-import com.flixify.backend.enums.ChunkStatusEnum;
 import com.flixify.backend.model.ChunkStatus;
 import com.flixify.backend.model.Resolution;
+import com.flixify.backend.repository.ChunkStatusRepository;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.Chunk;
@@ -18,13 +19,15 @@ import com.flixify.backend.repository.ChunkRepository;
 public class ChunkService {
 
     private final ChunkRepository chunkRepository;
+    private final ChunkStatusRepository chunkStatusRepository;
     private final VideoService videoService;
     private final ResolutionService resolutionService;
 
-    public ChunkService(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService) {
+    public ChunkService(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService, ChunkStatusRepository chunkStatusRepository) {
         this.chunkRepository = chunkRepository;
         this.videoService = videoService;
         this.resolutionService = resolutionService;
+        this.chunkStatusRepository = chunkStatusRepository;
     }
 
     public List<ChunkDto> getAllChunks(Integer userId, Integer videoId) {
@@ -44,17 +47,21 @@ public class ChunkService {
         Double startTime = addChunkDto.getStartTime();
         Double endTime = addChunkDto.getEndTime();
         String fileId = addChunkDto.getFileId();
-        ChunkStatus chunkStatus = ChunkStatusEnum.fromChunkStatus(addChunkDto.getChunkStatus());
+        ChunkStatus chunkStatus = getChunkStatus(addChunkDto.getChunkStatus());
         Double size = addChunkDto.getSize();
         Chunk chunk = new Chunk();
         chunk.setResolution(resolution);
         chunk.setStartTime(startTime);
         chunk.setEndTime(endTime);
-        ;
         chunk.setFileId(fileId);
         chunk.setChunkStatus(chunkStatus);
         chunk.setSize(size);
         return chunk;
+    }
+
+    public ChunkStatus getChunkStatus(String status) {
+
+        return chunkStatusRepository.findByStatus(status).orElseThrow(() -> new InvalidChunkStatus(status));
     }
 
     public List<ChunkDto> addChunks(Integer userId, Integer videoId, List<AddChunkDto> addChunkDtoList) {
@@ -66,7 +73,7 @@ public class ChunkService {
             AddChunkDto addChunkDto = addChunkDtoList.get(chunkId);
             Chunk chunk = constructChunk(addChunkDto);
             chunk.setVideo(video);
-            chunk.setChunkId(chunkId);
+            chunk.setChunkId(chunkId + 1);
             chunks.add(new ChunkDto(chunk));
             chunkRepository.save(chunk);
         }
