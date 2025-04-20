@@ -16,7 +16,7 @@ import com.flixify.backend.enums.ResponseStatusEnum;
 public class GlobalExceptionHandler {
 
 
-    private ResponseEntity NOT_FOUND(Exception e) {
+    private ResponseEntity<ResponseDto> NOT_FOUND(RuntimeException e) {
 
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);

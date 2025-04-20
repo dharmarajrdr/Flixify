@@ -2,7 +2,9 @@ package com.flixify.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.flixify.backend.enums.ResponseStatusEnum;
+import lombok.Data;
 
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDto {
 
