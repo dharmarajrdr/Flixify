@@ -1,14 +1,11 @@
 package com.flixify.backend.util;
 
-import com.flixify.backend.custom_exceptions.AccountNotFound;
-import com.flixify.backend.custom_exceptions.PermissionDenied;
-import com.flixify.backend.custom_exceptions.UserNotFound;
+import com.flixify.backend.custom_exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
 
@@ -36,6 +33,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<ResponseDto> userNotFound(UserNotFound e) {
+
+        return NOT_FOUND(e);
+    }
+
+    @ExceptionHandler(ResolutionNotFound.class)
+    public ResponseEntity<ResponseDto> resolutionNotFound(ResolutionNotFound e) {
 
         return NOT_FOUND(e);
     }
