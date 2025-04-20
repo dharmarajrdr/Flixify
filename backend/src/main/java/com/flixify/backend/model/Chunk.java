@@ -2,7 +2,6 @@ package com.flixify.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
@@ -16,7 +15,6 @@ public class Chunk extends Auditable {
     private Integer chunkId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "video_id")
     private Video video;
 
     @ManyToOne(fetch = FetchType.LAZY)
