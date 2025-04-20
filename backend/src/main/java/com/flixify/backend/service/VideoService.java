@@ -4,7 +4,6 @@ import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import org.springframework.stereotype.Service;
 
-import com.flixify.backend.custom_exceptions.UserNotFound;
 import com.flixify.backend.model.User;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.VideoRepository;
@@ -33,7 +32,7 @@ public class VideoService {
         return videoRepository.findByOwner(owner);
     }
 
-    public Video getVideo(Integer userId, Integer videoId) throws UserNotFound, VideoNotExist, PermissionDenied {
+    public Video getVideo(Integer userId, Integer videoId) {
 
         User user = getUser(userId);
         Video video = videoRepository.findById(videoId).orElseThrow(() -> new VideoNotExist(videoId));
@@ -43,7 +42,7 @@ public class VideoService {
         return video;
     }
 
-    public Video addVideo(String title, Double duration, Long size, Integer chunkCount, Integer userId) throws UserNotFound {
+    public Video addVideo(String title, Double duration, Long size, Integer chunkCount, Integer userId) {
 
         User owner = getUser(userId);
         Video video = new Video(title, duration, size, chunkCount, owner);
