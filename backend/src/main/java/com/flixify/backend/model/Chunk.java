@@ -1,16 +1,14 @@
 package com.flixify.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Chunk extends Auditable {
 
     private Integer chunkId;
@@ -30,7 +28,7 @@ public class Chunk extends Auditable {
     @Column(nullable = false)
     private String fileId;    // UUID = Name of the file
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ChunkStatus chunkStatus;
 
     private Double size;
