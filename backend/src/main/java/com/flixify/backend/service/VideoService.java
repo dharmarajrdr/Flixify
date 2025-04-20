@@ -22,12 +22,12 @@ public class VideoService {
         this.userService = userService;
     }
 
-    private User getUser(Integer userId) throws UserNotFound {
+    private User getUser(Integer userId) {
 
         return userService.findUserById(userId);
     }
 
-    public List<Video> getVideosByUserId(Integer userId) throws UserNotFound {
+    public List<Video> getVideosByUserId(Integer userId) {
 
         User owner = getUser(userId);
         return videoRepository.findByOwner(owner);

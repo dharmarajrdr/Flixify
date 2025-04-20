@@ -23,7 +23,7 @@ public class VideoController {
     }
 
     @GetMapping("/video/{userId}")
-    public ResponseEntity<ResponseDto> getAllVideos(@PathVariable Integer userId) throws UserNotFound {
+    public ResponseEntity<ResponseDto> getAllVideos(@PathVariable Integer userId) {
 
         List<Video> videos = videoService.getVideosByUserId(userId);
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the videos of the given user.", videos, null);

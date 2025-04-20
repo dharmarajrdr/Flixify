@@ -33,7 +33,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findUserById(Integer userId) throws UserNotFound {
+    public User findUserById(Integer userId) {
 
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFound(userId));
     }
