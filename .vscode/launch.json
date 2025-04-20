@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-BackendApplication<flixify>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.flixify.backend.BackendApplication",
+            "projectName": "flixify",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
