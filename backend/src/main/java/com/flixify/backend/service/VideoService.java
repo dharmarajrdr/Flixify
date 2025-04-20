@@ -1,5 +1,7 @@
 package com.flixify.backend.service;
 
+import com.flixify.backend.custom_exceptions.PermissionDenied;
+import com.flixify.backend.custom_exceptions.VideoNotExist;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.custom_exceptions.UserNotFound;
@@ -29,6 +31,16 @@ public class VideoService {
 
         User owner = getUser(userId);
         return videoRepository.findByOwner(owner);
+    }
+
+    public Video getVideo(Integer userId, Integer videoId) throws UserNotFound, VideoNotExist, PermissionDenied {
+
+        User user = getUser(userId);
+        Video video = videoRepository.findById(videoId).orElseThrow(() -> new VideoNotExist(videoId));
+        if (!video.getOwner().equals(user)) {
+            throw new PermissionDenied("Unable to fetch the video of another user.");
+        }
+        return video;
     }
 
     public Video addVideo(String title, Double duration, Long size, Integer chunkCount, Integer userId) throws UserNotFound {
