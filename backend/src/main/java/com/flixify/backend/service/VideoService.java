@@ -2,6 +2,7 @@ package com.flixify.backend.service;
 
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
+import com.flixify.backend.dto.request.AddVideoDto;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
@@ -42,7 +43,13 @@ public class VideoService {
         return video;
     }
 
-    public Video addVideo(String title, Double duration, Long size, Integer chunkCount, Integer userId) {
+    public Video addVideo(AddVideoDto addVideoDto) {
+
+        String title = addVideoDto.getTitle();
+        Double duration = addVideoDto.getDuration();
+        Long size = addVideoDto.getSize();
+        Integer userId = addVideoDto.getUserId();
+        Integer chunkCount = 0;
 
         User owner = getUser(userId);
         Video video = new Video(title, duration, size, chunkCount, owner);
