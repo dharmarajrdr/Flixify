@@ -2,12 +2,16 @@ package com.flixify.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Video extends Auditable {
 
     private String title;
@@ -20,12 +24,4 @@ public class Video extends Auditable {
 
     @OneToOne
     private User owner;
-
-    public Video(String title, Double duration, Long size, Integer chunkCount, User owner) {
-        this.title = title;
-        this.duration = duration;
-        this.size = size;
-        this.chunkCount = chunkCount;
-        this.owner = owner;
-    }
 }

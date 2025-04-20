@@ -1,11 +1,15 @@
 package com.flixify.backend.model;
 
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Account extends Auditable {
 
@@ -14,10 +18,4 @@ public class Account extends Auditable {
     private String phoneNumber;
 
     private String password;
-
-    public Account(String email, String phoneNumber, String password) {
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-    }
 }
