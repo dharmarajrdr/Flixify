@@ -3,12 +3,13 @@ package com.flixify.backend.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flixify.backend.custom_exceptions.PermissionDenied;
-import com.flixify.backend.custom_exceptions.UserNotFound;
+import com.flixify.backend.dto.request.AddChunkDto;
 import com.flixify.backend.dto.response.ChunkDto;
+import com.flixify.backend.enums.ChunkStatusEnum;
+import com.flixify.backend.model.ChunkStatus;
+import com.flixify.backend.model.Resolution;
 import org.springframework.stereotype.Service;
 
-import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.ChunkRepository;
@@ -18,20 +19,57 @@ public class ChunkService {
 
     private final ChunkRepository chunkRepository;
     private final VideoService videoService;
+    private final ResolutionService resolutionService;
 
-    public ChunkService(ChunkRepository chunkRepository, VideoService videoService) {
+    public ChunkService(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService) {
         this.chunkRepository = chunkRepository;
         this.videoService = videoService;
+        this.resolutionService = resolutionService;
     }
 
-    public List<ChunkDto> getAllChunks(Integer userId, Integer videoId) throws UserNotFound, VideoNotExist, PermissionDenied {
+    public List<ChunkDto> getAllChunks(Integer userId, Integer videoId) {
 
         Video video = videoService.getVideo(userId, videoId);
         List<Chunk> chunks = chunkRepository.findByVideo(video);
         List<ChunkDto> chunkDtoList = new ArrayList<>();
-        for(Chunk chunk: chunks) {
+        for (Chunk chunk : chunks) {
             chunkDtoList.add(new ChunkDto(chunk));
         }
         return chunkDtoList;
+    }
+
+    private Chunk constructChunk(AddChunkDto addChunkDto) {
+        Integer pixel = addChunkDto.getPixel();
+        Resolution resolution = resolutionService.getResolution(pixel);
+        Double startTime = addChunkDto.getStartTime();
+        Double endTime = addChunkDto.getEndTime();
+        String fileId = addChunkDto.getFileId();
+        ChunkStatus chunkStatus = ChunkStatusEnum.fromChunkStatus(addChunkDto.getChunkStatus());
+        Double size = addChunkDto.getSize();
+        Chunk chunk = new Chunk();
+        chunk.setResolution(resolution);
+        chunk.setStartTime(startTime);
+        chunk.setEndTime(endTime);
+        ;
+        chunk.setFileId(fileId);
+        chunk.setChunkStatus(chunkStatus);
+        chunk.setSize(size);
+        return chunk;
+    }
+
+    public List<ChunkDto> addChunks(Integer userId, Integer videoId, List<AddChunkDto> addChunkDtoList) {
+
+        Video video = videoService.getVideo(userId, videoId);
+        int chunksCount = addChunkDtoList.size();
+        List<ChunkDto> chunks = new ArrayList<>();
+        for (int chunkId = 0; chunkId < chunksCount; chunkId++) {
+            AddChunkDto addChunkDto = addChunkDtoList.get(chunkId);
+            Chunk chunk = constructChunk(addChunkDto);
+            chunk.setVideo(video);
+            chunk.setChunkId(chunkId);
+            chunks.add(new ChunkDto(chunk));
+            chunkRepository.save(chunk);
+        }
+        return chunks;
     }
 }
