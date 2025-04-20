@@ -15,7 +15,6 @@ public class Chunk extends Auditable {
     private Video video;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(nullable = false)
     private Resolution resolution;
 
     @Column(nullable = false)
