@@ -1,12 +1,16 @@
 package com.flixify.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Chunk extends Auditable {
 
     private Integer chunkId;
