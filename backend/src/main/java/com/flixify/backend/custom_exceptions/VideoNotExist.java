@@ -1,6 +1,6 @@
 package com.flixify.backend.custom_exceptions;
 
-public class VideoNotExist extends Exception {
+public class VideoNotExist extends RuntimeException {
 
     public VideoNotExist(Integer videoId) {
 

@@ -1,6 +1,6 @@
 package com.flixify.backend.custom_exceptions;
 
-public class UserNotFound extends Exception {
+public class UserNotFound extends RuntimeException {
 
     public UserNotFound(Integer userId) {
 

@@ -1,6 +1,6 @@
 package com.flixify.backend.custom_exceptions;
 
-public class PermissionDenied extends Exception {
+public class PermissionDenied extends RuntimeException {
 
     public PermissionDenied(String message) {
 
