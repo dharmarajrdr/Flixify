@@ -4,6 +4,6 @@ public class ResolutionNotFound extends RuntimeException {
 
     public ResolutionNotFound(Integer pixel) {
 
-        super("Resolution with pixel '" + pixel + "' does not exist.");
+        super("Resolution with '" + pixel + "' pixel does not exist.");
     }
 }
