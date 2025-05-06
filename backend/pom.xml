@@ -49,6 +49,11 @@
 			<version>42.7.1</version> <!-- Use latest version -->
 		</dependency>
 		<dependency>
+			<groupId>org.mp4parser</groupId>
+			<artifactId>isoparser</artifactId>
+			<version>1.9.41</version>
+		</dependency>
+		<dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
