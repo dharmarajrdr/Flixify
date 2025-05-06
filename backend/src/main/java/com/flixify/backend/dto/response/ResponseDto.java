@@ -2,9 +2,13 @@ package com.flixify.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.flixify.backend.enums.ResponseStatusEnum;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@MappedSuperclass
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDto {
 

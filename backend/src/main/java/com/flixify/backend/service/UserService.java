@@ -31,7 +31,7 @@ public class UserService {
         String password = addUserDto.getPassword();
 
         Account account = accountService.addAccount(email, phoneNumber, password);
-        User user = new User(userName, displayName, account);
+        User user = new User(userName, displayName, account, null);
         return userRepository.save(user);
     }
 
