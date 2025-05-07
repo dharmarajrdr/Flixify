@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
@@ -24,7 +26,13 @@ public class Video extends Auditable {
 
     private Integer chunkCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "owner_id")
     private User owner;
+
+    @OneToMany(mappedBy = "video")
+    private List<Chunk> chunks;
+
+    @ManyToOne
+    private VideoSplitterRule rule;
 }

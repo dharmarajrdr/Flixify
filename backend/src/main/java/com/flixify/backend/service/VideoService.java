@@ -52,7 +52,13 @@ public class VideoService {
         Integer chunkCount = 0;
 
         User owner = getUser(userId);
-        Video video = new Video(title, duration, size, chunkCount, owner);
+
+        Video video = new Video();
+        video.setTitle(title);
+        video.setDuration(duration);
+        video.setSize(size);
+        video.setOwner(owner);
+        video.setChunkCount(chunkCount);
         return videoRepository.save(video);
     }
 }

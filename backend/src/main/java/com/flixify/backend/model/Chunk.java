@@ -13,10 +13,10 @@ public class Chunk extends Auditable {
 
     private Integer chunkId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Video video;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Resolution resolution;
 
     @Column(nullable = false)
@@ -28,7 +28,7 @@ public class Chunk extends Auditable {
     @Column(nullable = false)
     private String fileId;    // UUID = Name of the file
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private ChunkStatus chunkStatus;
 
     private Double size;
