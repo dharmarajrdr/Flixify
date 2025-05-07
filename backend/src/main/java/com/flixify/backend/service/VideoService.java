@@ -3,15 +3,14 @@ package com.flixify.backend.service;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
-import com.flixify.backend.dto.response.VideoDto;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.VideoRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VideoService {
@@ -29,22 +28,27 @@ public class VideoService {
         return userService.findUserById(userId);
     }
 
-    public List<VideoDto> getVideosByUserId(Integer userId) {
+    public List<Video> getVideosByUserId(Integer userId) {
 
         User owner = getUser(userId);
-        List<Video> videos = videoRepository.findByOwner(owner);
-        List<VideoDto> videoDtos = new ArrayList<>();
-        for (Video video : videos) {
-            videoDtos.add(VideoDto.fromVideo(video));
-        }
-        return videoDtos;
+        return videoRepository.findByOwner(owner);
     }
 
     public Video getVideo(Integer userId, Integer videoId) {
 
         User user = getUser(userId);
         Video video = videoRepository.findById(videoId).orElseThrow(() -> new VideoNotExist(videoId));
-        if (!video.getOwner().equals(user)) {
+        if (!video.isOwner(user)) {
+            throw new PermissionDenied("Unable to fetch the video of another user.");
+        }
+        return video;
+    }
+
+    public Video getVideo(Integer userId, UUID fileId) {
+
+        User user = getUser(userId);
+        Video video = videoRepository.findByFileId(fileId).orElseThrow(() -> new VideoNotExist(fileId));
+        if (!video.isOwner(user)) {
             throw new PermissionDenied("Unable to fetch the video of another user.");
         }
         return video;
