@@ -25,6 +25,7 @@ public class User extends Auditable {
     private String displayName;
 
     @OneToOne
+    @JsonIgnore
     private Account account;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

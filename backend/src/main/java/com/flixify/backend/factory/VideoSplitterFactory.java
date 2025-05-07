@@ -1,7 +1,6 @@
 package com.flixify.backend.factory;
 
 import com.flixify.backend.custom_exceptions.InvalidEnumExpected;
-import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.service.VideoSplitterService;
 import com.flixify.backend.strategy.VideoSplitter.CountBasedVideoSplitter;
 import com.flixify.backend.strategy.VideoSplitter.DurationBasedVideoSplitter;
@@ -9,11 +8,9 @@ import com.flixify.backend.strategy.VideoSplitter.SizeBasedVideoSplitter;
 
 public class VideoSplitterFactory {
 
-    public static VideoSplitterService getVideoSplitter(VideoSplitterRule videoSplitterRule) {
+    public static VideoSplitterService getVideoSplitter(String ruleName) {
 
-        String name = videoSplitterRule.getName();
-
-        switch (name) {
+        switch (ruleName) {
 
             /**
              * Each chunk will have 'x' seconds/minutes
@@ -41,7 +38,7 @@ public class VideoSplitterFactory {
 
             default: {
 
-                throw new InvalidEnumExpected("Implementation for rule '" + name + "' does not exist.");
+                throw new InvalidEnumExpected("Implementation for rule '" + ruleName + "' does not exist.");
             }
         }
     }

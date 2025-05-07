@@ -3,6 +3,7 @@ package com.flixify.backend.service;
 import com.flixify.backend.custom_exceptions.VideoUploadFailed;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.dto.request.VideoUploadRequestDto;
+import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.util.Generator;
 import org.mp4parser.IsoFile;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,6 +123,9 @@ public class VideoUploaderImpl implements VideoUploader {
 
             Integer userId = videoUploadRequestDto.getUserId();
             String title = videoUploadRequestDto.getTitle();
+//            String ruleName = videoUploadRequestDto.getVideoSplitterRule();
+//            VideoSplitterService videoSplitterService = VideoSplitterFactory.getVideoSplitter(ruleName);
+//            VideoSplitterRule videoSplitterRule = videoSplitterService.getVideoSplitterRule();
 
             AddVideoDto addVideoDto = getAddVideoDto(title, userId, size, duration, uniqueId);
             videoService.addVideo(addVideoDto);
