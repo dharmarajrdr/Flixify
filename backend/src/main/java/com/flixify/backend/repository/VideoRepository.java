@@ -8,6 +8,7 @@ import com.flixify.backend.model.Video;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
@@ -15,4 +16,6 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     public List<Video> findByOwner(User user);
 
     public Optional<Video> findByIdAndOwner(Integer videoId, User owner);
+
+    public Optional<Video> findByFileId(UUID fileId);
 }
