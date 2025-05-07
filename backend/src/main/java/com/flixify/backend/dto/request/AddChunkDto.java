@@ -1,5 +1,7 @@
 package com.flixify.backend.dto.request;
 
+import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.ChunkStatus;
 import lombok.Data;
 
 @Data
@@ -16,5 +18,15 @@ public class AddChunkDto {
     private String chunkStatus;
 
     private Double size;
+
+    public Chunk toChunk() {
+
+        Chunk chunk = new Chunk();
+        chunk.setFileId(fileId);
+        chunk.setStartTime(startTime);
+        chunk.setEndTime(endTime);
+        chunk.setSize(size);
+        return chunk;
+    }
 
 }

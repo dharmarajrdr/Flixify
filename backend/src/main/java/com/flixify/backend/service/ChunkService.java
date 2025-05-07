@@ -42,20 +42,14 @@ public class ChunkService {
     }
 
     private Chunk constructChunk(AddChunkDto addChunkDto) {
+
         Integer pixel = addChunkDto.getPixel();
         Resolution resolution = resolutionService.getResolution(pixel);
-        Double startTime = addChunkDto.getStartTime();
-        Double endTime = addChunkDto.getEndTime();
-        String fileId = addChunkDto.getFileId();
         ChunkStatus chunkStatus = getChunkStatus(addChunkDto.getChunkStatus());
-        Double size = addChunkDto.getSize();
-        Chunk chunk = new Chunk();
+
+        Chunk chunk = addChunkDto.toChunk();
         chunk.setResolution(resolution);
-        chunk.setStartTime(startTime);
-        chunk.setEndTime(endTime);
-        chunk.setFileId(fileId);
         chunk.setChunkStatus(chunkStatus);
-        chunk.setSize(size);
         return chunk;
     }
 
