@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/video")
@@ -24,15 +26,19 @@ public class VideoController {
     @GetMapping("")
     public ResponseEntity<ResponseDto> getAllVideos(@RequestParam Integer userId) {
 
-        List<VideoDto> videos = videoService.getVideosByUserId(userId);
-        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the videos of the given user.", videos, null);
+        List<Video> videos = videoService.getVideosByUserId(userId);
+        List<VideoDto> videoDtos = new ArrayList<>();
+        for (Video video : videos) {
+            videoDtos.add(VideoDto.fromVideo(video));
+        }
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the videos of the given user.", videoDtos, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/{videoId}")
-    public ResponseEntity<ResponseDto> getVideoInfo(@RequestParam Integer userId, @PathVariable Integer videoId) {
+    @GetMapping("/{fileId}")
+    public ResponseEntity<ResponseDto> getVideoInfo(@RequestParam Integer userId, @PathVariable String fileId) {
 
-        Video video = videoService.getVideo(userId, videoId);
+        VideoDto video = VideoDto.fromVideo(videoService.getVideo(userId, UUID.fromString(fileId)));
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the video info.", video, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
