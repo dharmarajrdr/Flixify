@@ -11,6 +11,7 @@ import com.flixify.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/v1/api")
 public class UserController {
 
     private final UserService userService;
