@@ -45,20 +45,15 @@ public class VideoService {
 
     public Video addVideo(AddVideoDto addVideoDto) {
 
-        String title = addVideoDto.getTitle();
-        Double duration = addVideoDto.getDuration();
-        Long size = addVideoDto.getSize();
-        Integer userId = addVideoDto.getUserId();
         Integer chunkCount = 0;
 
+        Integer userId = addVideoDto.getUserId();
         User owner = getUser(userId);
 
-        Video video = new Video();
-        video.setTitle(title);
-        video.setDuration(duration);
-        video.setSize(size);
+        Video video = addVideoDto.toVideo();
         video.setOwner(owner);
         video.setChunkCount(chunkCount);
+
         return videoRepository.save(video);
     }
 }
