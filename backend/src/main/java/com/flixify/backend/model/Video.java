@@ -21,7 +21,7 @@ public class Video extends Auditable {
     private String title;
 
     @Column(nullable = false, unique = true)
-    private UUID uniqueId;
+    private UUID fileId;
 
     @Column(nullable = false)
     private Double duration;
@@ -41,4 +41,8 @@ public class Video extends Auditable {
 
     @ManyToOne
     private VideoSplitterRule rule;
+
+    public boolean isOwner(User user) {
+        return owner == user;
+    }
 }

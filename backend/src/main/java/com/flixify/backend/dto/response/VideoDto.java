@@ -34,7 +34,7 @@ public class VideoDto {
 
         VideoDto videoDto = new VideoDto();
         videoDto.setTitle(video.getTitle());
-        videoDto.setFileId(video.getUniqueId());
+        videoDto.setFileId(video.getFileId());
         videoDto.setDuration(video.getDuration());
         videoDto.setSize(video.getSize());
         videoDto.setChunkCount(video.getChunkCount());

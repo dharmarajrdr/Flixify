@@ -23,7 +23,7 @@ public class AddVideoDto {
         video.setTitle(title);
         video.setDuration(duration);
         video.setSize(size);
-        video.setUniqueId(uniqueId);
+        video.setFileId(uniqueId);
         return video;
     }
 }
