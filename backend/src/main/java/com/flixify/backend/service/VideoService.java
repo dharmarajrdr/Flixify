@@ -3,12 +3,14 @@ package com.flixify.backend.service;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
+import com.flixify.backend.dto.response.VideoDto;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.VideoRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,10 +29,15 @@ public class VideoService {
         return userService.findUserById(userId);
     }
 
-    public List<Video> getVideosByUserId(Integer userId) {
+    public List<VideoDto> getVideosByUserId(Integer userId) {
 
         User owner = getUser(userId);
-        return videoRepository.findByOwner(owner);
+        List<Video> videos = videoRepository.findByOwner(owner);
+        List<VideoDto> videoDtos = new ArrayList<>();
+        for (Video video : videos) {
+            videoDtos.add(VideoDto.fromVideo(video));
+        }
+        return videoDtos;
     }
 
     public Video getVideo(Integer userId, Integer videoId) {

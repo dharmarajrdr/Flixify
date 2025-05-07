@@ -1,5 +1,6 @@
 package com.flixify.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class User extends Auditable {
     @OneToOne
     private Account account;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore     // To avoid circular reference
     private List<Video> videos;
 }

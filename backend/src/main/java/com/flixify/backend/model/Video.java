@@ -1,19 +1,20 @@
 package com.flixify.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Video extends Auditable {
 
     @Column(nullable = false)
@@ -30,8 +31,9 @@ public class Video extends Auditable {
 
     private Integer chunkCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "owner_id")
+    @JsonIgnore // To avoid circular reference
     private User owner;
 
     @OneToMany(mappedBy = "video")

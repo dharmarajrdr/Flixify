@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.Data;
 
+@Data
 @MappedSuperclass
 public abstract class Auditable extends BaseModel {
 
-    protected LocalDateTime createdAt;
-    protected LocalDateTime lastUpdatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime lastUpdatedAt;
 
     @PrePersist
     protected void onCreate() {
