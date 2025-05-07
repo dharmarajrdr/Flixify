@@ -35,12 +35,5 @@ public class VideoController {
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the video info.", video, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
-
-    @PostMapping("/video")
-    public ResponseEntity<ResponseDto> addVideo(@RequestBody AddVideoDto addVideoDto) {
-
-        Video video = videoService.addVideo(addVideoDto);
-        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Stored the video successfully.", video, null);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
+    
 }
