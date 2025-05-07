@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -17,6 +18,9 @@ public class Video extends Auditable {
 
     @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false, unique = true)
+    private UUID uniqueId;
 
     @Column(nullable = false)
     private Double duration;
