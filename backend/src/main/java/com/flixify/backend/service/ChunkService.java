@@ -73,4 +73,9 @@ public class ChunkService {
         }
         return chunks;
     }
+
+    public List<Chunk> saveAll(List<Chunk> chunks) {
+
+        return chunkRepository.saveAll(chunks);
+    }
 }

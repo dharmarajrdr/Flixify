@@ -22,7 +22,6 @@ public class AddChunkDto {
     public Chunk toChunk() {
 
         Chunk chunk = new Chunk();
-        chunk.setFileId(fileId);
         chunk.setStartTime(startTime);
         chunk.setEndTime(endTime);
         chunk.setSize(size);

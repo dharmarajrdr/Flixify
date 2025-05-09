@@ -25,9 +25,6 @@ public class Chunk extends Auditable {
     @Column(nullable = false)
     private Double endTime;
 
-    @Column(nullable = false)
-    private String fileId;    // UUID = Name of the file
-
     @ManyToOne
     private ChunkStatus chunkStatus;
 
