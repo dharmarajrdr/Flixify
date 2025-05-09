@@ -3,6 +3,9 @@ package com.flixify.backend.service;
 import com.flixify.backend.custom_exceptions.VideoUploadFailed;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.dto.request.VideoUploadRequestDto;
+import com.flixify.backend.factory.VideoSplitterFactory;
+import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.util.Generator;
 import org.mp4parser.IsoFile;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,9 +30,13 @@ public class VideoUploaderImpl implements VideoUploader {
     private String VIDEO_STORAGE_DIRECTORY;
 
     private final VideoService videoService;
+    private final ChunkService chunkService;
+    private final VideoSplitterRuleService videoSplitterRuleService;
 
-    public VideoUploaderImpl(VideoService videoService) {
+    public VideoUploaderImpl(VideoService videoService, ChunkService chunkService, VideoSplitterRuleService videoSplitterRuleService) {
         this.videoService = videoService;
+        this.chunkService = chunkService;
+        this.videoSplitterRuleService = videoSplitterRuleService;
     }
 
     /**
@@ -96,7 +104,7 @@ public class VideoUploaderImpl implements VideoUploader {
      * @param duration
      * @return
      */
-    private AddVideoDto getAddVideoDto(String title, Integer userId, long size, double duration, UUID uniqueId) {
+    private AddVideoDto getAddVideoDto(String title, Integer userId, long size, double duration, UUID uniqueId, VideoSplitterRule videoSplitterRule) {
 
         AddVideoDto addVideoDto = new AddVideoDto();
         addVideoDto.setTitle(title);
@@ -104,6 +112,7 @@ public class VideoUploaderImpl implements VideoUploader {
         addVideoDto.setSize(size);
         addVideoDto.setDuration(duration);
         addVideoDto.setUniqueId(uniqueId);
+        addVideoDto.setVideoSplitterRule(videoSplitterRule);
         return addVideoDto;
     }
 
@@ -123,18 +132,25 @@ public class VideoUploaderImpl implements VideoUploader {
 
             Integer userId = videoUploadRequestDto.getUserId();
             String title = videoUploadRequestDto.getTitle();
-//            String ruleName = videoUploadRequestDto.getVideoSplitterRule();
-//            VideoSplitterService videoSplitterService = VideoSplitterFactory.getVideoSplitter(ruleName);
-//            VideoSplitterRule videoSplitterRule = videoSplitterService.getVideoSplitterRule();
+            String ruleName = videoUploadRequestDto.getVideoSplitterRule();
 
-            AddVideoDto addVideoDto = getAddVideoDto(title, userId, size, duration, uniqueId);
-            videoService.addVideo(addVideoDto);
+            VideoSplitterRule videoSplitterRule = videoSplitterRuleService.getVideoSplitterRule(ruleName);
+            VideoSplitterService videoSplitterService = VideoSplitterFactory.getVideoSplitter(ruleName);
+
+            AddVideoDto addVideoDto = getAddVideoDto(title, userId, size, duration, uniqueId, videoSplitterRule);
+            Video video = videoService.addVideo(addVideoDto);
+
+            List<Chunk> splittedChunks = videoSplitterService.splitVideo(video, filePath);
+            List<Chunk> persistedChunks = chunkService.saveAll(splittedChunks);
 
             return filePath;
 
         } catch (IOException e) {
             deleteVideo(filePath);
             throw new VideoUploadFailed(e);
+        } catch (InterruptedException e) {
+            deleteVideo(filePath);
+            throw new RuntimeException(e);
         }
     }
 }
