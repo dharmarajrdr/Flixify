@@ -18,4 +18,6 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
     public Optional<Video> findByIdAndOwner(Integer videoId, User owner);
 
     public Optional<Video> findByFileId(UUID fileId);
+
+    public Boolean existsByFileIdAndOwner(UUID fileId, User owner);
 }

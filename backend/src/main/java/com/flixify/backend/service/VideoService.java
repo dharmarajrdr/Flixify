@@ -67,4 +67,10 @@ public class VideoService {
 
         return videoRepository.save(video);
     }
+
+    public Boolean isOwner(Integer userId, UUID fileId) {
+
+        User user = getUser(userId);
+        return videoRepository.existsByFileIdAndOwner(fileId, user);
+    }
 }

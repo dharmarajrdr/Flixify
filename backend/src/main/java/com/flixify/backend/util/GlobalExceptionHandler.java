@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return NOT_FOUND(e);
     }
 
+    @ExceptionHandler(ChunkMissing.class)
+    public ResponseEntity<ResponseDto> chunkMissing(ChunkMissing e) {
+
+        return NOT_FOUND(e);
+    }
+
     @ExceptionHandler(AccountNotFound.class)
     public ResponseEntity<ResponseDto> accountNotFound(AccountNotFound e) {
 
