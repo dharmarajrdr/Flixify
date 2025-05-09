@@ -1,5 +1,6 @@
 package com.flixify.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ public class Chunk extends Auditable {
     private Integer chunkId;
 
     @ManyToOne
+    @JsonIgnore
     private Video video;
 
     @ManyToOne

@@ -1,5 +1,6 @@
 package com.flixify.backend.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Video;
@@ -24,6 +25,7 @@ public class VideoDto {
 
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     private List<Chunk> chunks;
 
     private Integer chunkCount;

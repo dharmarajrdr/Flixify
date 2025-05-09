@@ -37,6 +37,7 @@ public class Video extends Auditable {
     private User owner;
 
     @OneToMany(mappedBy = "video")
+    @JsonIgnore
     private List<Chunk> chunks;
 
     @ManyToOne
