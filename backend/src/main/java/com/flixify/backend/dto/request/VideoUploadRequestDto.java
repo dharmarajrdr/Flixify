@@ -8,4 +8,6 @@ public class VideoUploadRequestDto {
     private String title;
 
     private Integer userId;
+
+    private String videoSplitterRule;
 }
