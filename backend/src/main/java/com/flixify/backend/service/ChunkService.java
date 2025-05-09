@@ -1,14 +1,23 @@
 package com.flixify.backend.service;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import com.flixify.backend.custom_exceptions.ChunkMissing;
 import com.flixify.backend.custom_exceptions.InvalidChunkStatus;
+import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.dto.request.AddChunkDto;
 import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.model.ChunkStatus;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.repository.ChunkStatusRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.Chunk;
@@ -23,6 +32,9 @@ public class ChunkService {
     private final VideoService videoService;
     private final ResolutionService resolutionService;
 
+    @Value("${video.storage.directory}")
+    private String VIDEO_STORAGE_DIRECTORY;
+
     public ChunkService(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService, ChunkStatusRepository chunkStatusRepository) {
         this.chunkRepository = chunkRepository;
         this.videoService = videoService;
@@ -30,9 +42,9 @@ public class ChunkService {
         this.chunkStatusRepository = chunkStatusRepository;
     }
 
-    public List<ChunkDto> getAllChunks(Integer userId, Integer videoId) {
+    public List<ChunkDto> getAllChunks(Integer userId, UUID fileId) {
 
-        Video video = videoService.getVideo(userId, videoId);
+        Video video = videoService.getVideo(userId, fileId);
         List<Chunk> chunks = chunkRepository.findByVideo(video);
         List<ChunkDto> chunkDtoList = new ArrayList<>();
         for (Chunk chunk : chunks) {
@@ -77,5 +89,24 @@ public class ChunkService {
     public List<Chunk> saveAll(List<Chunk> chunks) {
 
         return chunkRepository.saveAll(chunks);
+    }
+
+    private Resource getChunkAsResource(UUID fileId, Integer chunkId) throws MalformedURLException {
+
+        File file = new File(VIDEO_STORAGE_DIRECTORY + "/chunks/" + fileId + "/" + chunkId + ".mp4");
+        if(!file.exists()) {
+            throw new ChunkMissing(fileId, chunkId);
+        }
+
+        Path path = file.toPath();
+        return new UrlResource(path.toUri());
+    }
+
+    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId) throws MalformedURLException {
+
+        if(videoService.isOwner(userId, fileId)) {
+            return getChunkAsResource(fileId, chunkId);
+        }
+        throw new PermissionDenied("Unable to fetch the video of another user.");
     }
 }
