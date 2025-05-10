@@ -92,10 +92,6 @@ public class ResolutionService {
             for (File sourceFile : rawChunks) {
 
                 File targetFile = new File(resolutionToTranscodeDirectory.getAbsolutePath(), (chunkId++) + ".mp4");
-
-                System.out.println(sourceFile.getAbsolutePath());
-                System.out.println(targetFile.getAbsolutePath());
-
                 resolutionConverterService.convertResolution(resolutionToTranscode, sourceFile, targetFile);
             }
 

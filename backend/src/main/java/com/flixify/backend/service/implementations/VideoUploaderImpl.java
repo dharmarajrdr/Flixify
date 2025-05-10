@@ -99,7 +99,7 @@ public class VideoUploaderImpl implements VideoUploaderService {
             filePath = storeInDisk(videoFile, uniqueId.toString() + ".mp4");
 
             long size = getFileSize(videoFile);
-            double duration = videoService.getVideoDuration(filePath.toFile());
+            double duration = Math.floor(videoService.getVideoDuration(filePath.toFile()));
 
             Integer userId = videoUploadRequestDto.getUserId();
             String title = videoUploadRequestDto.getTitle();
