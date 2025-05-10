@@ -1,4 +1,4 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.VideoUploadFailed;
@@ -9,15 +9,14 @@ import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
+import com.flixify.backend.service.interfaces.*;
 import com.flixify.backend.util.Generator;
 import com.flixify.backend.util.LocalDisk;
-import org.mp4parser.IsoFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,10 +25,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class VideoUploaderImpl implements VideoUploader {
+public class VideoUploaderImpl implements VideoUploaderService {
 
     private final ResolutionService resolutionService;
-
     private final VideoService videoService;
     private final ChunkService chunkService;
     private final VideoSplitterRuleService videoSplitterRuleService;
@@ -69,23 +67,6 @@ public class VideoUploaderImpl implements VideoUploader {
     }
 
     /**
-     * Get the duration of the given video file
-     *
-     * @param filePath
-     * @return
-     * @throws IOException
-     */
-    private double getDuration(String filePath) throws IOException {
-
-        FileInputStream fis = new FileInputStream(new File(filePath));
-        IsoFile isoFile = new IsoFile(fis.getChannel());
-        long duration = isoFile.getMovieBox().getMovieHeaderBox().getDuration();
-        long timeScale = isoFile.getMovieBox().getMovieHeaderBox().getTimescale();
-        double durationInSeconds = (double) duration / timeScale;
-        return durationInSeconds;
-    }
-
-    /**
      * Construct the DTO to save the meta data of video
      *
      * @param title
@@ -118,7 +99,7 @@ public class VideoUploaderImpl implements VideoUploader {
             filePath = storeInDisk(videoFile, uniqueId.toString() + ".mp4");
 
             long size = getFileSize(videoFile);
-            double duration = 0; /* getDuration(filePath.toAbsolutePath().toString()); */
+            double duration = videoService.getVideoDuration(filePath.toFile());
 
             Integer userId = videoUploadRequestDto.getUserId();
             String title = videoUploadRequestDto.getTitle();
@@ -131,9 +112,20 @@ public class VideoUploaderImpl implements VideoUploader {
             Video video = videoService.addVideo(addVideoDto);
 
             Resolution rawFileResolution = resolutionService.getFileResolution(filePath.toFile());
+            Integer rawFilePixel = rawFileResolution.getPixel();
 
-            List<Chunk> splittedChunks = videoSplitterService.splitVideo(video, filePath, rawFileResolution);
-            List<Chunk> persistedChunks = chunkService.saveAll(splittedChunks);
+            File chunksDirectory = videoSplitterService.splitVideo(video, filePath, rawFileResolution);
+            List<Chunk> splittedChunks = chunkService.getChunksMetaData(chunksDirectory, video, rawFileResolution);
+            chunkService.saveAll(splittedChunks);
+
+            List<Resolution> resolutionsToConvert = resolutionService.getAllResolutionsLessThanPixel(rawFilePixel);
+            for (Resolution resolution : resolutionsToConvert) {
+                if (!resolution.getTitle().equals(rawFileResolution.getTitle())) {
+                    File transcodedChunksDirectory = resolutionService.transcodeChunks(resolution, uniqueId, rawFileResolution, video);
+                    List<Chunk> transcodedChunks = chunkService.getChunksMetaData(transcodedChunksDirectory, video, resolution);
+                    chunkService.saveAll(transcodedChunks);
+                }
+            }
 
             return filePath;
 

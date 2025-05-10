@@ -1,6 +1,7 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.model.Resolution;
+import com.flixify.backend.service.interfaces.ResolutionConverterService;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

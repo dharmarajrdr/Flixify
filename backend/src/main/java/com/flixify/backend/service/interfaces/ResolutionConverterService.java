@@ -1,4 +1,4 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.interfaces;
 
 import com.flixify.backend.model.Resolution;
 

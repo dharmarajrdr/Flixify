@@ -3,7 +3,7 @@ package com.flixify.backend.controller;
 import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
-import com.flixify.backend.service.ChunkService;
+import com.flixify.backend.service.interfaces.ChunkService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

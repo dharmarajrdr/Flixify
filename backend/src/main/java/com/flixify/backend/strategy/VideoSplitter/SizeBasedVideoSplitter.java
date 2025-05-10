@@ -4,11 +4,12 @@ import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
-import com.flixify.backend.service.VideoSplitterRuleService;
-import com.flixify.backend.service.VideoSplitterService;
+import com.flixify.backend.service.interfaces.VideoSplitterRuleService;
+import com.flixify.backend.service.interfaces.VideoSplitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -25,9 +26,9 @@ public class SizeBasedVideoSplitter implements VideoSplitterService {
     }
 
     @Override
-    public List<Chunk> splitVideo(Video video, Path videoFilePath, Resolution resolution) {
+    public File splitVideo(Video video, Path videoFilePath, Resolution resolution) {
 
-        return List.of();
+        return null;
     }
 }
 

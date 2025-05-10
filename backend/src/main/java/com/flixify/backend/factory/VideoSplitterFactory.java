@@ -1,7 +1,7 @@
 package com.flixify.backend.factory;
 
 import com.flixify.backend.custom_exceptions.InvalidEnumExpected;
-import com.flixify.backend.service.VideoSplitterService;
+import com.flixify.backend.service.interfaces.VideoSplitterService;
 import com.flixify.backend.strategy.VideoSplitter.CountBasedVideoSplitter;
 import com.flixify.backend.strategy.VideoSplitter.DurationBasedVideoSplitter;
 import com.flixify.backend.strategy.VideoSplitter.SizeBasedVideoSplitter;

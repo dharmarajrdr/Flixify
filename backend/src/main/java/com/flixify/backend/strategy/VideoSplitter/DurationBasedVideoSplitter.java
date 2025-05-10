@@ -3,24 +3,19 @@ package com.flixify.backend.strategy.VideoSplitter;
 import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.UnableToSplitException;
 import com.flixify.backend.custom_exceptions.VideoMissing;
-import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
-import com.flixify.backend.service.VideoSplitterRuleService;
-import com.flixify.backend.service.VideoSplitterService;
+import com.flixify.backend.service.interfaces.VideoSplitterRuleService;
+import com.flixify.backend.service.interfaces.VideoSplitterService;
 import com.flixify.backend.util.LocalDisk;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class DurationBasedVideoSplitter implements VideoSplitterService {
@@ -40,66 +35,6 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
         if (!Files.exists(videoFile)) {
             throw new VideoMissing(videoFile.toAbsolutePath().toString());
         }
-    }
-
-    private double getVideoDuration(File file) throws IOException, InterruptedException {
-
-        ProcessBuilder builder = new ProcessBuilder(
-                "ffprobe", "-v", "error", "-show_entries",
-                "format=duration", "-of", "default=noprint_wrappers=1:nokey=1",
-                file.getAbsolutePath()
-        );
-
-        Process process = builder.start();
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream())
-        );
-        String line = reader.readLine();
-
-        int exitCode = process.waitFor();
-        if (exitCode != 0 || line == null) {
-
-            throw new RuntimeException("Failed to get duration for: " + file.getName());
-        }
-
-        return Double.parseDouble(line.trim());
-    }
-
-    private List<Chunk> getChunksMetaData(File chunksDirectory, Video video, Resolution resolution) throws IOException, InterruptedException {
-
-        File[] chunkFiles = chunksDirectory.listFiles((dir, fileName) -> fileName.endsWith(".mp4"));
-        if (chunkFiles == null) {
-            return List.of();
-        }
-
-        List<Chunk> chunks = new java.util.ArrayList<>();
-        double currentStart = 0.0;
-
-        // Sort chunk files by numeric name (1.mp4, 2.mp4, ...)
-        Arrays.sort(chunkFiles, (f1, f2) -> {
-            int n1 = Integer.parseInt(f1.getName().replace(".mp4", ""));
-            int n2 = Integer.parseInt(f2.getName().replace(".mp4", ""));
-            return Integer.compare(n1, n2);
-        });
-
-        int chunkId = 1;
-        for (File file : chunkFiles) {
-            double duration = getVideoDuration(file);
-            double endTime = currentStart + duration;
-            double size = file.length(); // in bytes
-            Chunk chunk = Chunk.builder()
-                    .chunkId(chunkId++)
-                    .startTime(Math.floor(currentStart))
-                    .endTime(Math.floor(endTime))
-                    .size(size)
-                    .video(video)
-                    .resolution(resolution)
-                    .build();
-            chunks.add(chunk);
-            currentStart = endTime;
-        }
-
-        return chunks;
     }
 
     private void start(String videoFilePath, String chunkFilePathPattern) throws IOException, InterruptedException {
@@ -122,7 +57,7 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
     }
 
     @Override
-    public List<Chunk> splitVideo(Video video, Path videoFilePath, Resolution resolution) throws IOException, InterruptedException {
+    public File splitVideo(Video video, Path videoFilePath, Resolution resolution) throws IOException, InterruptedException {
 
         checkVideoFileExistence(videoFilePath);
 
@@ -137,8 +72,6 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
 
         start(videoFilePath.toAbsolutePath().toString(), chunkFilePathPattern);
 
-        List<Chunk> chunks = getChunksMetaData(chunksDirectory, video, resolution);
-
-        return chunks;
+        return chunksDirectory;
     }
 }

@@ -4,7 +4,7 @@ import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.dto.response.VideoDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
 import com.flixify.backend.model.Video;
-import com.flixify.backend.service.VideoService;
+import com.flixify.backend.service.interfaces.VideoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.flixify.backend.dto.request.AddUserDto;
 import com.flixify.backend.model.User;
-import com.flixify.backend.service.UserService;
+import com.flixify.backend.service.implementations.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
