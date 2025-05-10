@@ -46,6 +46,18 @@ public class ChunkServiceImpl implements ChunkService {
         return chunkDtoList;
     }
 
+    @Override
+    public List<ChunkDto> getAllChunksByResolution(Integer userId, UUID fileId, Resolution resolution) {
+
+        Video video = videoService.getVideo(userId, fileId);
+        List<Chunk> chunks = chunkRepository.findByVideoAndResolution(video, resolution);
+        List<ChunkDto> chunkDtoList = new ArrayList<>();
+        for (Chunk chunk : chunks) {
+            chunkDtoList.add(new ChunkDto(chunk));
+        }
+        return chunkDtoList;
+    }
+
     public List<Chunk> saveAll(List<Chunk> chunks) {
 
         return chunkRepository.saveAll(chunks);
