@@ -1,5 +1,10 @@
 package com.flixify.backend.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum VideoSplitterRuleEnum {
 
     SPLIT_BY_DURATION(1, "DURATION_BASED_VIDEO_SPLITTER", "Split by duration"),
@@ -10,21 +15,4 @@ public enum VideoSplitterRuleEnum {
     private final String name;
     private final String description;
 
-    VideoSplitterRuleEnum(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
