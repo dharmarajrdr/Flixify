@@ -2,6 +2,8 @@ package com.flixify.backend.util;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalDisk {
 
@@ -45,4 +47,34 @@ public class LocalDisk {
             directory.mkdirs();
         }
     }
+
+    /**
+     * Get the list of all files in the given directory
+     * @param directory
+     * @return
+     */
+    public static List<File> getAllFilesInDirectory(File directory) {
+
+        List<File> filePaths = new ArrayList<>();
+
+        if (directory == null || !directory.exists()) {
+            return filePaths;
+        }
+
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return filePaths;
+        }
+
+        for (File file : files) {
+            if (file.isFile()) {
+                filePaths.add(file);
+            } else if (file.isDirectory()) {
+                filePaths.addAll(getAllFilesInDirectory(file));
+            }
+        }
+
+        return filePaths;
+    }
+
 }
