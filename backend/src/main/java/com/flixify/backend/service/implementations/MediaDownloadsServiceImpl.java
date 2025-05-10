@@ -64,15 +64,19 @@ public class MediaDownloadsServiceImpl implements MediaDownloadsService {
 
         Video video = videoService.getVideo(userId, fileId);
         List<MediaDownloads> mediaDownloads = mediaDownloadsRepository.findAllByVideo(video);
-        Map<Integer, Long> downloadsPerChunk = new TreeMap<>();
+        Map<Integer, ChunkDownloadDto> downloadsPerChunk = new TreeMap<>();
         for (MediaDownloads mediaDownload : mediaDownloads) {
-            Integer chunkId = mediaDownload.getChunk().getChunkId();
+            Chunk chunk = mediaDownload.getChunk();
+            Integer chunkId = chunk.getChunkId();
             Long downloads = mediaDownload.getDownloads();
-            downloadsPerChunk.put(chunkId, downloadsPerChunk.getOrDefault(chunkId, 0L) + downloads);
+            Double[] range = new Double[]{chunk.getStartTime(), chunk.getEndTime()};
+            ChunkDownloadDto chunkDownloadDto = downloadsPerChunk.getOrDefault(chunkId, new ChunkDownloadDto(chunkId, 0L, range));
+            chunkDownloadDto.setDownloads(chunkDownloadDto.getDownloads() + downloads);
+            downloadsPerChunk.put(chunkId, chunkDownloadDto);
         }
         List<ChunkDownloadDto> chunkDownloadDtos = new ArrayList<>();
-        for (Map.Entry<Integer, Long> entry : downloadsPerChunk.entrySet()) {
-            chunkDownloadDtos.add(new ChunkDownloadDto(entry.getKey(), entry.getValue()));
+        for (Map.Entry<Integer, ChunkDownloadDto> entry : downloadsPerChunk.entrySet()) {
+            chunkDownloadDtos.add(entry.getValue());
         }
         return chunkDownloadDtos;
     }

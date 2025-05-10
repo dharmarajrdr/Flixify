@@ -10,4 +10,6 @@ public class ChunkDownloadDto {
     private Integer chunkId;
 
     private Long downloads;
+
+    private Double[] range;
 }
