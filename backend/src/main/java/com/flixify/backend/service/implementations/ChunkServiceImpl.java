@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.flixify.backend.config.PathConfig;
+import com.flixify.backend.custom_exceptions.ChunkDoesNotExist;
+import com.flixify.backend.custom_exceptions.ChunkDoesNotSupportResolution;
 import com.flixify.backend.custom_exceptions.ChunkMissing;
-import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.service.interfaces.ChunkService;
@@ -29,10 +30,12 @@ public class ChunkServiceImpl implements ChunkService {
 
     private final ChunkRepository chunkRepository;
     private final VideoService videoService;
+    private final ResolutionService resolutionService;
 
-    public ChunkServiceImpl(ChunkRepository chunkRepository, VideoService videoService) {
+    public ChunkServiceImpl(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService) {
         this.chunkRepository = chunkRepository;
         this.videoService = videoService;
+        this.resolutionService = resolutionService;
     }
 
     public List<ChunkDto> getAllChunks(Integer userId, UUID fileId) {
@@ -63,9 +66,9 @@ public class ChunkServiceImpl implements ChunkService {
         return chunkRepository.saveAll(chunks);
     }
 
-    private Resource getChunkAsResource(UUID fileId, Integer chunkId) throws MalformedURLException {
+    private Resource getChunkAsResource(UUID fileId, Integer chunkId, Resolution resolution) throws MalformedURLException {
 
-        File file = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + fileId + "/" + chunkId + ".mp4");
+        File file = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + fileId + "/" + resolution.getTitle() + "/" + chunkId + ".mp4");
         if (!file.exists()) {
             throw new ChunkMissing(fileId, chunkId);
         }
@@ -74,12 +77,31 @@ public class ChunkServiceImpl implements ChunkService {
         return new UrlResource(path.toUri());
     }
 
-    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId) throws MalformedURLException {
+    private void checkChunkWithResolutionExists(Video video, Integer chunkId, Resolution resolution) {
 
-        if (videoService.isOwner(userId, fileId)) {
-            return getChunkAsResource(fileId, chunkId);
+        List<Chunk> chunks = chunkRepository.findByVideoAndChunkId(video, chunkId);
+        if (chunks.isEmpty()) {
+            throw new ChunkDoesNotExist(chunkId, video.getFileId());
         }
-        throw new PermissionDenied("Unable to fetch the video of another user.");
+
+        boolean resolutionExists = false;
+        for (Chunk chunk : chunks) {
+            if (chunk.getResolution().equals(resolution)) {
+                resolutionExists = true;
+                break;
+            }
+        }
+        if (!resolutionExists) {
+            throw new ChunkDoesNotSupportResolution(chunkId, resolution);
+        }
+    }
+
+    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId, String resolutionTitle) throws MalformedURLException {
+
+        Video video = videoService.getVideo(userId, fileId);
+        Resolution resolution = resolutionService.getResolutionByTitle(resolutionTitle);
+        checkChunkWithResolutionExists(video, chunkId, resolution);
+        return getChunkAsResource(fileId, chunkId, resolution);
     }
 
     @Override
