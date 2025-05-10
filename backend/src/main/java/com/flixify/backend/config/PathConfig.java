@@ -31,6 +31,6 @@ public class PathConfig {
 
         LocalDisk.createDirectoryIfNotExists(new File(VIDEO_STORAGE_DIRECTORY));
         LocalDisk.createDirectoryIfNotExists(new File(CHUNK_STORAGE_DIRECTORY));
-        LocalDisk.createDirectoryIfNotExists(new File(MANIFEST_STORAGE_PATH));
+        // LocalDisk.createDirectoryIfNotExists(new File(MANIFEST_STORAGE_PATH));
     }
 }
