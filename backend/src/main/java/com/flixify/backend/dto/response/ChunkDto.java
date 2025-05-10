@@ -26,8 +26,7 @@ public class ChunkDto {
         this.chunkId = chunk.getChunkId();
         this.resolution = chunk.getResolution();
         this.range = new Double[]{chunk.getStartTime(), chunk.getEndTime()};
-        this.resourceUrl = "https://flixify.com/video/" + chunk.getVideo().getFileId().toString() + "/chunk/" + chunk.getChunkId();
+        this.resourceUrl = "https://flixify.com/v1/api/video/" + chunk.getVideo().getFileId().toString() + "/chunk/" + chunk.getChunkId() + "/" + resolution.getTitle();
         this.size = chunk.getSize();
     }
-
 }
