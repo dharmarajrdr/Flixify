@@ -4,29 +4,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.flixify.backend.enums.VideoUploadStatusEnum;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.flixify.backend.enums.UploadStatusEnum;
 import com.flixify.backend.model.UploadStatus;
 import com.flixify.backend.repository.UploadStatusRepository;
 
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UploadStatusSeeder implements ApplicationRunner {
 
-    @Autowired
-    private UploadStatusRepository UploadStatusRepository;
+    private final UploadStatusRepository UploadStatusRepository;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         if (UploadStatusRepository.count() == 0) {
-            List<UploadStatus> UploadStatus = Arrays.stream(UploadStatusEnum.values())
+            List<UploadStatus> UploadStatus = Arrays.stream(VideoUploadStatusEnum.values())
                     .map(resEnum -> new UploadStatus(resEnum.getStatus(), resEnum.getDescription()))
                     .collect(Collectors.toList());
 

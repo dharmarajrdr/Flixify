@@ -5,6 +5,7 @@ import com.flixify.backend.dto.response.ManifestDto;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.service.interfaces.ChunkService;
 import com.flixify.backend.service.interfaces.ManifestService;
+import com.flixify.backend.service.interfaces.ResolutionService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

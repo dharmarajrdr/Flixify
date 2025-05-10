@@ -4,6 +4,7 @@ import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
+import com.flixify.backend.service.interfaces.UserService;
 import com.flixify.backend.service.interfaces.VideoService;
 import com.flixify.backend.util.LocalDisk;
 import org.springframework.stereotype.Service;

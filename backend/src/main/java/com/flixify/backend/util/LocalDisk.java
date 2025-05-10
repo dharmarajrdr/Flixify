@@ -1,5 +1,7 @@
 package com.flixify.backend.util;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -9,11 +11,12 @@ public class LocalDisk {
 
     /**
      * Deletes the given file from the disk
+     *
      * @param path
      */
     public static void deleteFile(Path path) {
 
-        if(path != null) {
+        if (path != null) {
             File file = path.toFile();
             file.delete();
         }
@@ -21,6 +24,7 @@ public class LocalDisk {
 
     /**
      * Deletes the given directory from the disk
+     *
      * @param path
      */
     public static void deleteDirectory(Path path) {
@@ -39,6 +43,7 @@ public class LocalDisk {
 
     /**
      * Creates directory if does not exist.
+     *
      * @param directory
      */
     public static void createDirectoryIfNotExists(File directory) {
@@ -50,6 +55,7 @@ public class LocalDisk {
 
     /**
      * Get the list of all files in the given directory
+     *
      * @param directory
      * @return List<File>
      */
@@ -79,6 +85,7 @@ public class LocalDisk {
 
     /**
      * Checks whether the given file exist or not
+     *
      * @param outputPath
      * @return boolean
      */
@@ -86,5 +93,16 @@ public class LocalDisk {
 
         File file = new File(outputPath);
         return file.exists();
+    }
+
+    /**
+     * Get the size of the given video file
+     *
+     * @param videoFile
+     * @return
+     */
+    public static long getFileSize(MultipartFile videoFile) {
+
+        return videoFile.getSize();
     }
 }
