@@ -1,5 +1,6 @@
 package com.flixify.backend.service.implementations;
 
+import com.flixify.backend.service.interfaces.AccountService;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.custom_exceptions.UserNotFound;
