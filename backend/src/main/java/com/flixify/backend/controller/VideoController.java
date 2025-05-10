@@ -42,5 +42,13 @@ public class VideoController {
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the video info.", video, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<ResponseDto> deleteVideo(@RequestParam Integer userId, @PathVariable UUID fileId) {
+
+        videoService.deleteVideo(userId, fileId);
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Deleted the video.", null, null);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
     
 }
