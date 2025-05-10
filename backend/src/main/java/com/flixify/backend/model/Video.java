@@ -36,7 +36,7 @@ public class Video extends Auditable {
     @JsonIgnore // To avoid circular reference
     private User owner;
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Chunk> chunks;
 
