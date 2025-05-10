@@ -1,6 +1,7 @@
 package com.flixify.backend.service;
 
 import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
 
@@ -12,5 +13,5 @@ public interface VideoSplitterService {
 
     public VideoSplitterRule getVideoSplitterRule();
 
-    public List<Chunk> splitVideo(Video video, Path videoFilePath) throws IOException, InterruptedException;
+    public List<Chunk> splitVideo(Video video, Path videoFilePath, Resolution resolution) throws IOException, InterruptedException;
 }
