@@ -33,10 +33,10 @@ public class ChunkController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/video/{fileId}/chunk/{chunkId}")
-    public ResponseEntity<Resource> getChunk(@RequestParam Integer userId, @PathVariable UUID fileId, @PathVariable Integer chunkId) throws MalformedURLException {
+    @GetMapping("/video/{fileId}/chunk/{chunkId}/resolution/{resolution}")
+    public ResponseEntity<Resource> getChunk(@RequestParam Integer userId, @PathVariable UUID fileId, @PathVariable Integer chunkId, @PathVariable String resolution) throws MalformedURLException {
 
-        Resource resource = chunkService.getChunkFile(fileId, chunkId, userId);
+        Resource resource = chunkService.getChunkFile(fileId, chunkId, userId, resolution);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaTypeFactory
                         .getMediaType(resource)

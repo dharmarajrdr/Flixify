@@ -22,5 +22,5 @@ public interface ChunkService {
 
     public List<ChunkDto> getAllChunksByResolution(Integer userId, UUID fileId, Resolution resolution);
 
-    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId) throws MalformedURLException;
+    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId, String resolutionTitle) throws MalformedURLException;
 }
