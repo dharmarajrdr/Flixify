@@ -16,5 +16,7 @@ public interface ChunkRepository extends JpaRepository<Chunk, Integer> {
 
     public List<Chunk> findByVideoAndResolution(Video video, Resolution resolution);
 
+    public List<Chunk> findByVideoAndChunkId(Video video, Integer chunkId);
+
     public Boolean existsByVideoAndChunkIdAndResolution(Video video, Integer chunkId, Resolution resolution);
 }
