@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.ChunkMissing;
 import com.flixify.backend.custom_exceptions.InvalidChunkStatus;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
@@ -15,7 +16,6 @@ import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.model.ChunkStatus;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.repository.ChunkStatusRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -31,9 +31,6 @@ public class ChunkService {
     private final ChunkStatusRepository chunkStatusRepository;
     private final VideoService videoService;
     private final ResolutionService resolutionService;
-
-    @Value("${video.storage.directory}")
-    private String VIDEO_STORAGE_DIRECTORY;
 
     public ChunkService(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService, ChunkStatusRepository chunkStatusRepository) {
         this.chunkRepository = chunkRepository;
@@ -57,11 +54,9 @@ public class ChunkService {
 
         Integer pixel = addChunkDto.getPixel();
         Resolution resolution = resolutionService.getResolution(pixel);
-        ChunkStatus chunkStatus = getChunkStatus(addChunkDto.getChunkStatus());
 
         Chunk chunk = addChunkDto.toChunk();
         chunk.setResolution(resolution);
-        chunk.setChunkStatus(chunkStatus);
         return chunk;
     }
 
@@ -93,7 +88,7 @@ public class ChunkService {
 
     private Resource getChunkAsResource(UUID fileId, Integer chunkId) throws MalformedURLException {
 
-        File file = new File(VIDEO_STORAGE_DIRECTORY + "/chunks/" + fileId + "/" + chunkId + ".mp4");
+        File file = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + fileId + "/" + chunkId + ".mp4");
         if(!file.exists()) {
             throw new ChunkMissing(fileId, chunkId);
         }
