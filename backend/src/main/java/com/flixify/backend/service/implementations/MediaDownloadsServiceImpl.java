@@ -10,6 +10,7 @@ import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.MediaDownloadsRepository;
 import com.flixify.backend.service.interfaces.ChunkService;
 import com.flixify.backend.service.interfaces.MediaDownloadsService;
+import com.flixify.backend.service.interfaces.ResolutionService;
 import com.flixify.backend.service.interfaces.VideoService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;

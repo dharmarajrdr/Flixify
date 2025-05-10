@@ -5,9 +5,9 @@ import com.flixify.backend.custom_exceptions.ChunkDirectoryMissing;
 import com.flixify.backend.custom_exceptions.ResolutionAlreadyExist;
 import com.flixify.backend.custom_exceptions.ResolutionNotFound;
 import com.flixify.backend.model.Resolution;
-import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.ResolutionRepository;
 import com.flixify.backend.service.interfaces.ResolutionConverterService;
+import com.flixify.backend.service.interfaces.ResolutionService;
 import com.flixify.backend.util.LocalDisk;
 import org.springframework.stereotype.Service;
 
@@ -19,21 +19,23 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ResolutionService {
+public class ResolutionServiceImpl implements ResolutionService {
 
     private final ResolutionRepository resolutionRepository;
     private final ResolutionConverterService resolutionConverterService;
 
-    public ResolutionService(ResolutionRepository resolutionRepository, ResolutionConverterService resolutionConverterService) {
+    public ResolutionServiceImpl(ResolutionRepository resolutionRepository, ResolutionConverterService resolutionConverterService) {
         this.resolutionRepository = resolutionRepository;
         this.resolutionConverterService = resolutionConverterService;
     }
 
+    @Override
     public List<Resolution> getAllResolutionsLessThanPixel(int pixel) {
 
         return resolutionRepository.findResolutionByPixelLessThanLimit(pixel);
     }
 
+    @Override
     public Resolution getResolutionByTitle(String title) {
 
         return resolutionRepository.findByTitle(title).orElseThrow(() -> new ResolutionNotFound(title));
@@ -45,6 +47,7 @@ public class ResolutionService {
         return results.isEmpty() ? null : results.get(0);
     }
 
+    @Override
     public Resolution getFileResolution(File file) throws IOException {
 
         ProcessBuilder builder = new ProcessBuilder(
@@ -73,7 +76,8 @@ public class ResolutionService {
         }
     }
 
-    public File transcodeChunks(Resolution resolutionToTranscode, UUID uniqueId, Resolution rawResolution, Video video) {
+    @Override
+    public File transcodeChunks(Resolution resolutionToTranscode, UUID uniqueId, Resolution rawResolution) {
 
         File rawChunksDirectory = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + uniqueId + "/" + rawResolution.getTitle());
         File resolutionToTranscodeDirectory = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + uniqueId + "/" + resolutionToTranscode.getTitle());

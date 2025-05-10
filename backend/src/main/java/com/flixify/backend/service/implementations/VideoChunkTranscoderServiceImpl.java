@@ -61,7 +61,7 @@ public class VideoChunkTranscoderServiceImpl implements VideoChunkTranscoderServ
         List<Resolution> resolutionsToConvert = resolutionService.getAllResolutionsLessThanPixel(rawFilePixel);
         for (Resolution resolution : resolutionsToConvert) {
             if (!resolution.getTitle().equals(rawFileResolution.getTitle())) {
-                File transcodedChunksDirectory = resolutionService.transcodeChunks(resolution, uniqueId, rawFileResolution, video);
+                File transcodedChunksDirectory = resolutionService.transcodeChunks(resolution, uniqueId, rawFileResolution);
                 List<Chunk> transcodedChunks = chunkService.getChunksMetaData(transcodedChunksDirectory, video, resolution);
                 chunkService.saveAll(transcodedChunks);
             }
