@@ -1,6 +1,7 @@
 package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.service.interfaces.AccountService;
+import com.flixify.backend.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.custom_exceptions.UserNotFound;
@@ -11,12 +12,12 @@ import com.flixify.backend.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AccountService accountService;
 
-    public UserService(UserRepository userRepository, AccountService accountService) {
+    public UserServiceImpl(UserRepository userRepository, AccountService accountService) {
         this.userRepository = userRepository;
         this.accountService = accountService;
     }
