@@ -1,15 +1,17 @@
 package com.flixify.backend.service;
 
+import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.VideoUploadFailed;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.dto.request.VideoUploadRequestDto;
 import com.flixify.backend.factory.VideoSplitterFactory;
 import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.util.Generator;
+import com.flixify.backend.util.LocalDisk;
 import org.mp4parser.IsoFile;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,17 +28,17 @@ import java.util.UUID;
 @Service
 public class VideoUploaderImpl implements VideoUploader {
 
-    @Value("${video.storage.directory}")
-    private String VIDEO_STORAGE_DIRECTORY;
+    private final ResolutionService resolutionService;
 
     private final VideoService videoService;
     private final ChunkService chunkService;
     private final VideoSplitterRuleService videoSplitterRuleService;
 
-    public VideoUploaderImpl(VideoService videoService, ChunkService chunkService, VideoSplitterRuleService videoSplitterRuleService) {
+    public VideoUploaderImpl(VideoService videoService, ChunkService chunkService, VideoSplitterRuleService videoSplitterRuleService, ResolutionService resolutionService) {
         this.videoService = videoService;
         this.chunkService = chunkService;
         this.videoSplitterRuleService = videoSplitterRuleService;
+        this.resolutionService = resolutionService;
     }
 
     /**
@@ -48,23 +50,11 @@ public class VideoUploaderImpl implements VideoUploader {
      */
     private Path storeInDisk(MultipartFile videoFile, String fileName) throws IOException {
 
-        Path uploadPath = Paths.get(VIDEO_STORAGE_DIRECTORY);
+        Path uploadPath = Paths.get(PathConfig.VIDEO_STORAGE_DIRECTORY);
         Files.createDirectories(uploadPath);
         Path filePath = uploadPath.resolve(fileName);
         Files.write(filePath, videoFile.getBytes());
         return filePath;
-    }
-
-    /**
-     * Delete the video file from the disk
-     * @param videoFile
-     */
-    private void deleteVideo(Path videoFile) {
-
-        if(videoFile != null) {
-            File file = videoFile.toFile();
-            file.delete();
-        }
     }
 
     /**
@@ -140,16 +130,18 @@ public class VideoUploaderImpl implements VideoUploader {
             AddVideoDto addVideoDto = getAddVideoDto(title, userId, size, duration, uniqueId, videoSplitterRule);
             Video video = videoService.addVideo(addVideoDto);
 
-            List<Chunk> splittedChunks = videoSplitterService.splitVideo(video, filePath);
+            Resolution rawFileResolution = resolutionService.getFileResolution(filePath.toFile());
+
+            List<Chunk> splittedChunks = videoSplitterService.splitVideo(video, filePath, rawFileResolution);
             List<Chunk> persistedChunks = chunkService.saveAll(splittedChunks);
 
             return filePath;
 
         } catch (IOException e) {
-            deleteVideo(filePath);
+            LocalDisk.deleteFile(filePath);
             throw new VideoUploadFailed(e);
         } catch (InterruptedException e) {
-            deleteVideo(filePath);
+            LocalDisk.deleteFile(filePath);
             throw new RuntimeException(e);
         }
     }
