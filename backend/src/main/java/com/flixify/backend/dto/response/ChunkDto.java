@@ -1,7 +1,6 @@
 package com.flixify.backend.dto.response;
 
 import com.flixify.backend.model.Chunk;
-import com.flixify.backend.model.ChunkStatus;
 import com.flixify.backend.model.Resolution;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +19,6 @@ public class ChunkDto {
 
     private String resourceUrl;
 
-    private ChunkStatus chunkStatus;
-
     private Double size;
 
     public ChunkDto(Chunk chunk) {
@@ -30,7 +27,6 @@ public class ChunkDto {
         this.resolution = chunk.getResolution();
         this.range = new Double[]{chunk.getStartTime(), chunk.getEndTime()};
         this.resourceUrl = "https://flixify.com/video/" + chunk.getVideo().getFileId().toString() + "/chunk/" + chunk.getChunkId();
-        this.chunkStatus = chunk.getChunkStatus();
         this.size = chunk.getSize();
     }
 
