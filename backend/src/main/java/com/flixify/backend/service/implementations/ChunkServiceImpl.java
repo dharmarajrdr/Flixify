@@ -2,23 +2,14 @@ package com.flixify.backend.service.implementations;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.ChunkDoesNotExist;
 import com.flixify.backend.custom_exceptions.ChunkDoesNotSupportResolution;
-import com.flixify.backend.custom_exceptions.ChunkMissing;
 import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.service.interfaces.ChunkService;
 import com.flixify.backend.service.interfaces.VideoService;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.Chunk;
@@ -30,14 +21,13 @@ public class ChunkServiceImpl implements ChunkService {
 
     private final ChunkRepository chunkRepository;
     private final VideoService videoService;
-    private final ResolutionService resolutionService;
 
-    public ChunkServiceImpl(ChunkRepository chunkRepository, VideoService videoService, ResolutionService resolutionService) {
+    public ChunkServiceImpl(ChunkRepository chunkRepository, VideoService videoService) {
         this.chunkRepository = chunkRepository;
         this.videoService = videoService;
-        this.resolutionService = resolutionService;
     }
 
+    @Override
     public List<ChunkDto> getAllChunks(Integer userId, UUID fileId) {
 
         Video video = videoService.getVideo(userId, fileId);
@@ -66,18 +56,8 @@ public class ChunkServiceImpl implements ChunkService {
         return chunkRepository.saveAll(chunks);
     }
 
-    private Resource getChunkAsResource(UUID fileId, Integer chunkId, Resolution resolution) throws MalformedURLException {
-
-        File file = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + fileId + "/" + resolution.getTitle() + "/" + chunkId + ".mp4");
-        if (!file.exists()) {
-            throw new ChunkMissing(fileId, chunkId);
-        }
-
-        Path path = file.toPath();
-        return new UrlResource(path.toUri());
-    }
-
-    private void checkChunkWithResolutionExists(Video video, Integer chunkId, Resolution resolution) {
+    @Override
+    public void checkChunkWithResolutionExists(Video video, Integer chunkId, Resolution resolution) {
 
         List<Chunk> chunks = chunkRepository.findByVideoAndChunkId(video, chunkId);
         if (chunks.isEmpty()) {
@@ -96,12 +76,10 @@ public class ChunkServiceImpl implements ChunkService {
         }
     }
 
-    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId, String resolutionTitle) throws MalformedURLException {
+    @Override
+    public Optional<Chunk> getChunkByVideoAndResolutionAndChunkId(Video video, Resolution resolution, Integer chunkId) {
 
-        Video video = videoService.getVideo(userId, fileId);
-        Resolution resolution = resolutionService.getResolutionByTitle(resolutionTitle);
-        checkChunkWithResolutionExists(video, chunkId, resolution);
-        return getChunkAsResource(fileId, chunkId, resolution);
+        return chunkRepository.findChunkByVideoAndResolutionAndChunkId(video, resolution, chunkId);
     }
 
     @Override
