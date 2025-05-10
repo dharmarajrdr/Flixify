@@ -51,7 +51,7 @@ public class LocalDisk {
     /**
      * Get the list of all files in the given directory
      * @param directory
-     * @return
+     * @return List<File>
      */
     public static List<File> getAllFilesInDirectory(File directory) {
 
@@ -77,4 +77,14 @@ public class LocalDisk {
         return filePaths;
     }
 
+    /**
+     * Checks whether the given file exist or not
+     * @param outputPath
+     * @return boolean
+     */
+    public static boolean fileExist(String outputPath) {
+
+        File file = new File(outputPath);
+        return file.exists();
+    }
 }
