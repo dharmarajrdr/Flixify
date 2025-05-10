@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class Chunk extends Auditable {
 
     private Integer chunkId;
@@ -26,9 +27,6 @@ public class Chunk extends Auditable {
 
     @Column(nullable = false)
     private Double endTime;
-
-    @ManyToOne
-    private ChunkStatus chunkStatus;
 
     private Double size;
 }

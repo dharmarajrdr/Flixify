@@ -4,7 +4,7 @@ import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.dto.response.VideoDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
 import com.flixify.backend.model.Video;
-import com.flixify.backend.service.VideoService;
+import com.flixify.backend.service.interfaces.VideoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +40,14 @@ public class VideoController {
 
         VideoDto video = VideoDto.fromVideo(videoService.getVideo(userId, UUID.fromString(fileId)));
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the video info.", video, null);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<ResponseDto> deleteVideo(@RequestParam Integer userId, @PathVariable UUID fileId) {
+
+        videoService.deleteVideo(userId, fileId);
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Deleted the video.", null, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
     

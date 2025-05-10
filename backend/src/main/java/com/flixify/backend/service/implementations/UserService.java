@@ -1,4 +1,4 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.implementations;
 
 import org.springframework.stereotype.Service;
 

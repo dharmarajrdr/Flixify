@@ -1,8 +1,9 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.custom_exceptions.InvalidEnumExpected;
 import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.repository.VideoSplitterRuleRepository;
+import com.flixify.backend.service.interfaces.VideoSplitterRuleService;
 import org.springframework.stereotype.Service;
 
 @Service

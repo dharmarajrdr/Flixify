@@ -3,7 +3,7 @@ package com.flixify.backend.controller;
 import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
-import com.flixify.backend.service.ChunkService;
+import com.flixify.backend.service.interfaces.ChunkService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,10 +33,10 @@ public class ChunkController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/video/{fileId}/chunk/{chunkId}")
-    public ResponseEntity<Resource> getChunk(@RequestParam Integer userId, @PathVariable UUID fileId, @PathVariable Integer chunkId) throws MalformedURLException {
+    @GetMapping("/video/{fileId}/chunk/{chunkId}/resolution/{resolution}")
+    public ResponseEntity<Resource> getChunk(@RequestParam Integer userId, @PathVariable UUID fileId, @PathVariable Integer chunkId, @PathVariable String resolution) throws MalformedURLException {
 
-        Resource resource = chunkService.getChunkFile(fileId, chunkId, userId);
+        Resource resource = chunkService.getChunkFile(fileId, chunkId, userId, resolution);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaTypeFactory
                         .getMediaType(resource)

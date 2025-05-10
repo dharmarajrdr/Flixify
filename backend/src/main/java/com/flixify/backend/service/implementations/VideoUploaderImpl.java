@@ -1,21 +1,22 @@
-package com.flixify.backend.service;
+package com.flixify.backend.service.implementations;
 
+import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.VideoUploadFailed;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.dto.request.VideoUploadRequestDto;
 import com.flixify.backend.factory.VideoSplitterFactory;
 import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
+import com.flixify.backend.service.interfaces.*;
 import com.flixify.backend.util.Generator;
-import org.mp4parser.IsoFile;
-import org.springframework.beans.factory.annotation.Value;
+import com.flixify.backend.util.LocalDisk;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,19 +25,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class VideoUploaderImpl implements VideoUploader {
+public class VideoUploaderImpl implements VideoUploaderService {
 
-    @Value("${video.storage.directory}")
-    private String VIDEO_STORAGE_DIRECTORY;
-
+    private final ResolutionService resolutionService;
     private final VideoService videoService;
     private final ChunkService chunkService;
     private final VideoSplitterRuleService videoSplitterRuleService;
 
-    public VideoUploaderImpl(VideoService videoService, ChunkService chunkService, VideoSplitterRuleService videoSplitterRuleService) {
+    public VideoUploaderImpl(VideoService videoService, ChunkService chunkService, VideoSplitterRuleService videoSplitterRuleService, ResolutionService resolutionService) {
         this.videoService = videoService;
         this.chunkService = chunkService;
         this.videoSplitterRuleService = videoSplitterRuleService;
+        this.resolutionService = resolutionService;
     }
 
     /**
@@ -48,23 +48,11 @@ public class VideoUploaderImpl implements VideoUploader {
      */
     private Path storeInDisk(MultipartFile videoFile, String fileName) throws IOException {
 
-        Path uploadPath = Paths.get(VIDEO_STORAGE_DIRECTORY);
+        Path uploadPath = Paths.get(PathConfig.VIDEO_STORAGE_DIRECTORY);
         Files.createDirectories(uploadPath);
         Path filePath = uploadPath.resolve(fileName);
         Files.write(filePath, videoFile.getBytes());
         return filePath;
-    }
-
-    /**
-     * Delete the video file from the disk
-     * @param videoFile
-     */
-    private void deleteVideo(Path videoFile) {
-
-        if(videoFile != null) {
-            File file = videoFile.toFile();
-            file.delete();
-        }
     }
 
     /**
@@ -76,23 +64,6 @@ public class VideoUploaderImpl implements VideoUploader {
     private long getFileSize(MultipartFile videoFile) {
 
         return videoFile.getSize();
-    }
-
-    /**
-     * Get the duration of the given video file
-     *
-     * @param filePath
-     * @return
-     * @throws IOException
-     */
-    private double getDuration(String filePath) throws IOException {
-
-        FileInputStream fis = new FileInputStream(new File(filePath));
-        IsoFile isoFile = new IsoFile(fis.getChannel());
-        long duration = isoFile.getMovieBox().getMovieHeaderBox().getDuration();
-        long timeScale = isoFile.getMovieBox().getMovieHeaderBox().getTimescale();
-        double durationInSeconds = (double) duration / timeScale;
-        return durationInSeconds;
     }
 
     /**
@@ -128,7 +99,7 @@ public class VideoUploaderImpl implements VideoUploader {
             filePath = storeInDisk(videoFile, uniqueId.toString() + ".mp4");
 
             long size = getFileSize(videoFile);
-            double duration = 0; /* getDuration(filePath.toAbsolutePath().toString()); */
+            double duration = Math.floor(videoService.getVideoDuration(filePath.toFile()));
 
             Integer userId = videoUploadRequestDto.getUserId();
             String title = videoUploadRequestDto.getTitle();
@@ -140,16 +111,29 @@ public class VideoUploaderImpl implements VideoUploader {
             AddVideoDto addVideoDto = getAddVideoDto(title, userId, size, duration, uniqueId, videoSplitterRule);
             Video video = videoService.addVideo(addVideoDto);
 
-            List<Chunk> splittedChunks = videoSplitterService.splitVideo(video, filePath);
-            List<Chunk> persistedChunks = chunkService.saveAll(splittedChunks);
+            Resolution rawFileResolution = resolutionService.getFileResolution(filePath.toFile());
+            Integer rawFilePixel = rawFileResolution.getPixel();
+
+            File chunksDirectory = videoSplitterService.splitVideo(video, filePath, rawFileResolution);
+            List<Chunk> splittedChunks = chunkService.getChunksMetaData(chunksDirectory, video, rawFileResolution);
+            chunkService.saveAll(splittedChunks);
+
+            List<Resolution> resolutionsToConvert = resolutionService.getAllResolutionsLessThanPixel(rawFilePixel);
+            for (Resolution resolution : resolutionsToConvert) {
+                if (!resolution.getTitle().equals(rawFileResolution.getTitle())) {
+                    File transcodedChunksDirectory = resolutionService.transcodeChunks(resolution, uniqueId, rawFileResolution, video);
+                    List<Chunk> transcodedChunks = chunkService.getChunksMetaData(transcodedChunksDirectory, video, resolution);
+                    chunkService.saveAll(transcodedChunks);
+                }
+            }
 
             return filePath;
 
         } catch (IOException e) {
-            deleteVideo(filePath);
+            LocalDisk.deleteFile(filePath);
             throw new VideoUploadFailed(e);
         } catch (InterruptedException e) {
-            deleteVideo(filePath);
+            LocalDisk.deleteFile(filePath);
             throw new RuntimeException(e);
         }
     }
