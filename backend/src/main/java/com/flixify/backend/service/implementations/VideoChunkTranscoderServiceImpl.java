@@ -1,17 +1,16 @@
 package com.flixify.backend.service.implementations;
 
-import com.flixify.backend.dto.request.AddVideoDto;
-import com.flixify.backend.dto.request.VideoUploadRequestDto;
+import com.flixify.backend.dto.response.VideoUploadedEventDto;
+import com.flixify.backend.enums.VideoUploadStatusEnum;
 import com.flixify.backend.factory.VideoSplitterFactory;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
-import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.service.interfaces.*;
-import com.flixify.backend.util.LocalDisk;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,41 +21,39 @@ import java.util.UUID;
 @Service
 public class VideoChunkTranscoderServiceImpl implements VideoChunkTranscoderService {
 
-    private final VideoService videoService;
-    private final VideoSplitterRuleService videoSplitterRuleService;
-    private final ResolutionService resolutionService;
     private final ChunkService chunkService;
+    private final ResolutionService resolutionService;
+    private final VideoUploadTaskLogService videoUploadTaskLogService;
 
-    public VideoChunkTranscoderServiceImpl(VideoService videoService, VideoSplitterRuleService videoSplitterRuleService, ResolutionService resolutionService, ChunkService chunkService) {
-        this.videoService = videoService;
-        this.videoSplitterRuleService = videoSplitterRuleService;
-        this.resolutionService = resolutionService;
+    public VideoChunkTranscoderServiceImpl(ResolutionService resolutionService, ChunkService chunkService, VideoUploadTaskLogService videoUploadTaskLogService) {
         this.chunkService = chunkService;
+        this.resolutionService = resolutionService;
+        this.videoUploadTaskLogService = videoUploadTaskLogService;
     }
 
     @Async
-    @Override
-    public void splitUploadedVideIntoDifferentResolutions(MultipartFile videoFile, Path filePath, VideoUploadRequestDto videoUploadRequestDto, UUID uniqueId) throws IOException, InterruptedException {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void splitUploadedVideIntoDifferentResolutions(VideoUploadedEventDto videoUploadedEventDto) throws IOException, InterruptedException {
+        Path rawVideoFilePath = videoUploadedEventDto.getRawVideoFilePath();
+        UUID uniqueId = videoUploadedEventDto.getUniqueId();
+        String ruleName = videoUploadedEventDto.getRuleName();
+        Video video = videoUploadedEventDto.getVideo();
 
-        long size = LocalDisk.getFileSize(videoFile);
-        double duration = Math.floor(videoService.getVideoDuration(filePath.toFile()));
+        videoUploadTaskLogService.addTaskUpdate(video, VideoUploadStatusEnum.SPLITTING_VIDEO);
 
-        Integer userId = videoUploadRequestDto.getUserId();
-        String title = videoUploadRequestDto.getTitle();
-        String ruleName = videoUploadRequestDto.getVideoSplitterRule();
-
-        VideoSplitterRule videoSplitterRule = videoSplitterRuleService.getVideoSplitterRule(ruleName);
         VideoSplitterService videoSplitterService = VideoSplitterFactory.getVideoSplitter(ruleName);
 
-        AddVideoDto addVideoDto = AddVideoDto.builder().title(title).userId(userId).size(size).duration(duration).uniqueId(uniqueId).videoSplitterRule(videoSplitterRule).build();
-        Video video = videoService.addVideo(addVideoDto);
-
-        Resolution rawFileResolution = resolutionService.getFileResolution(filePath.toFile());
+        Resolution rawFileResolution = resolutionService.getFileResolution(rawVideoFilePath.toFile());
         Integer rawFilePixel = rawFileResolution.getPixel();
 
-        File chunksDirectory = videoSplitterService.splitVideo(video, filePath, rawFileResolution);
+        File chunksDirectory = videoSplitterService.splitVideo(video, rawVideoFilePath, rawFileResolution);
+
+        videoUploadTaskLogService.addTaskUpdate(video, VideoUploadStatusEnum.VIDEO_SPLIT_SUCCESS);
+
         List<Chunk> splittedChunks = chunkService.getChunksMetaData(chunksDirectory, video, rawFileResolution);
         chunkService.saveAll(splittedChunks);
+
+        videoUploadTaskLogService.addTaskUpdate(video, VideoUploadStatusEnum.RESOLUTION_CONVERTING);
 
         List<Resolution> resolutionsToConvert = resolutionService.getAllResolutionsLessThanPixel(rawFilePixel);
         for (Resolution resolution : resolutionsToConvert) {
@@ -66,5 +63,8 @@ public class VideoChunkTranscoderServiceImpl implements VideoChunkTranscoderServ
                 chunkService.saveAll(transcodedChunks);
             }
         }
+
+        videoUploadTaskLogService.addTaskUpdate(video, VideoUploadStatusEnum.RESOLUTION_CONVERTED);
+
     }
 }
