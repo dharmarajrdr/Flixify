@@ -16,5 +16,7 @@ public interface ResolutionRepository extends JpaRepository<Resolution, Integer>
     Optional<Resolution> findByPixel(Integer pixel);
 
     @Query("SELECT r FROM Resolution r WHERE r.pixel <= :pixel ORDER BY r.pixel DESC")
-    List<Resolution> findResolutionByPixelLessThanLimit(@Param("pixel") int pixel);
+    public List<Resolution> findResolutionByPixelLessThanLimit(@Param("pixel") int pixel);
+
+    public Optional<Resolution> findByTitle(String title);
 }
