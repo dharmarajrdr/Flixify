@@ -3,6 +3,7 @@ package com.flixify.backend.service.implementations;
 import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.ChunkDirectoryMissing;
 import com.flixify.backend.custom_exceptions.ResolutionAlreadyExist;
+import com.flixify.backend.custom_exceptions.ResolutionNotFound;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.ResolutionRepository;
@@ -31,6 +32,11 @@ public class ResolutionService {
     public List<Resolution> getAllResolutionsLessThanPixel(int pixel) {
 
         return resolutionRepository.findResolutionByPixelLessThanLimit(pixel);
+    }
+
+    public Resolution getResolutionByTitle(String title) {
+
+        return resolutionRepository.findByTitle(title).orElseThrow(() -> new ResolutionNotFound(title));
     }
 
     private Resolution getNearestResolution(int pixel) {
@@ -95,7 +101,7 @@ public class ResolutionService {
                 resolutionConverterService.convertResolution(resolutionToTranscode, sourceFile, targetFile);
             }
 
-            return  resolutionToTranscodeDirectory;
+            return resolutionToTranscodeDirectory;
 
         } catch (Exception e) {
             LocalDisk.deleteDirectory(resolutionToTranscodeDirectory.toPath()); // Delete the chunks directory if any issue
