@@ -64,6 +64,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
     }
 
+    @ExceptionHandler(ChunkDoesNotSupportResolution.class)
+    public ResponseEntity<ResponseDto> chunkDoesNotSupportResolution(ChunkDoesNotSupportResolution e) {
+
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ResponseDto> dataIntegrityViolationException(DataIntegrityViolationException e) {
 
