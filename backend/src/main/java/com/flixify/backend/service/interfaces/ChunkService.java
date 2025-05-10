@@ -4,12 +4,11 @@ import com.flixify.backend.dto.response.ChunkDto;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ChunkService {
@@ -22,5 +21,7 @@ public interface ChunkService {
 
     public List<ChunkDto> getAllChunksByResolution(Integer userId, UUID fileId, Resolution resolution);
 
-    public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId, String resolutionTitle) throws MalformedURLException;
+    public void checkChunkWithResolutionExists(Video video, Integer chunkId, Resolution resolution);
+
+    public Optional<Chunk> getChunkByVideoAndResolutionAndChunkId(Video video, Resolution resolution, Integer chunkId);
 }

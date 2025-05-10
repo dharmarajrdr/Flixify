@@ -1,6 +1,7 @@
 package com.flixify.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.flixify.backend.model.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,5 @@ public interface ChunkRepository extends JpaRepository<Chunk, Integer> {
 
     public List<Chunk> findByVideoAndChunkId(Video video, Integer chunkId);
 
-    public Boolean existsByVideoAndChunkIdAndResolution(Video video, Integer chunkId, Resolution resolution);
+    public Optional<Chunk> findChunkByVideoAndResolutionAndChunkId(Video video, Resolution resolution, Integer chunkId);
 }
