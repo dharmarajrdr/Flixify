@@ -4,8 +4,8 @@ import com.flixify.backend.model.Resolution;
 
 public class ChunkDoesNotSupportResolution extends RuntimeException {
 
-    public ChunkDoesNotSupportResolution(Resolution resolution) {
+    public ChunkDoesNotSupportResolution(Integer chunkId, Resolution resolution) {
 
-        super("Chunk does not support resolution '" + resolution.getTitle() + "'.");
+        super("Chunk with id " + chunkId + " does not support resolution " + resolution);
     }
 }
