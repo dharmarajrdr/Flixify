@@ -1,12 +1,15 @@
 package com.flixify.backend.strategy.VideoSplitter;
 
+import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.UnableToSplitException;
 import com.flixify.backend.custom_exceptions.VideoMissing;
 import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.service.VideoSplitterRuleService;
 import com.flixify.backend.service.VideoSplitterService;
+import com.flixify.backend.util.LocalDisk;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,13 +42,6 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
         }
     }
 
-    private void createDirectoryIfNotExists(File directory) {
-
-        if (directory != null && !directory.exists()) {
-            directory.mkdirs();
-        }
-    }
-
     private double getVideoDuration(File file) throws IOException, InterruptedException {
 
         ProcessBuilder builder = new ProcessBuilder(
@@ -69,7 +65,7 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
         return Double.parseDouble(line.trim());
     }
 
-    private List<Chunk> getChunksMetaData(File chunksDirectory, Video video) throws IOException, InterruptedException {
+    private List<Chunk> getChunksMetaData(File chunksDirectory, Video video, Resolution resolution) throws IOException, InterruptedException {
 
         File[] chunkFiles = chunksDirectory.listFiles((dir, fileName) -> fileName.endsWith(".mp4"));
         if (chunkFiles == null) {
@@ -91,12 +87,14 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
             double duration = getVideoDuration(file);
             double endTime = currentStart + duration;
             double size = file.length(); // in bytes
-            Chunk chunk = new Chunk();
-            chunk.setChunkId(chunkId++);
-            chunk.setStartTime(Math.floor(currentStart));
-            chunk.setEndTime(Math.floor(endTime));
-            chunk.setSize(size);
-            chunk.setVideo(video);
+            Chunk chunk = Chunk.builder()
+                    .chunkId(chunkId++)
+                    .startTime(Math.floor(currentStart))
+                    .endTime(Math.floor(endTime))
+                    .size(size)
+                    .video(video)
+                    .resolution(resolution)
+                    .build();
             chunks.add(chunk);
             currentStart = endTime;
         }
@@ -124,22 +122,22 @@ public class DurationBasedVideoSplitter implements VideoSplitterService {
     }
 
     @Override
-    public List<Chunk> splitVideo(Video video, Path videoFilePath) throws IOException, InterruptedException {
+    public List<Chunk> splitVideo(Video video, Path videoFilePath, Resolution resolution) throws IOException, InterruptedException {
 
         checkVideoFileExistence(videoFilePath);
 
         File file = videoFilePath.toFile();
         String name = file.getName();
         String nameWithoutExtension = name.substring(0, name.lastIndexOf('.'));
-        File chunksDirectory = new File(file.getParent(), "chunks/"+ nameWithoutExtension);
+        File chunksDirectory = new File(PathConfig.CHUNK_STORAGE_DIRECTORY, nameWithoutExtension + "/" + resolution.getTitle());
 
-        createDirectoryIfNotExists(chunksDirectory);
+        LocalDisk.createDirectoryIfNotExists(chunksDirectory);
 
         String chunkFilePathPattern = new File(chunksDirectory, "%d.mp4").getAbsolutePath();
 
         start(videoFilePath.toAbsolutePath().toString(), chunkFilePathPattern);
 
-        List<Chunk> chunks = getChunksMetaData(chunksDirectory, video);
+        List<Chunk> chunks = getChunksMetaData(chunksDirectory, video, resolution);
 
         return chunks;
     }

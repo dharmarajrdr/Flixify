@@ -1,6 +1,7 @@
 package com.flixify.backend.strategy.VideoSplitter;
 
 import com.flixify.backend.model.Chunk;
+import com.flixify.backend.model.Resolution;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.model.VideoSplitterRule;
 import com.flixify.backend.service.VideoSplitterRuleService;
@@ -24,7 +25,7 @@ public class SizeBasedVideoSplitter implements VideoSplitterService {
     }
 
     @Override
-    public List<Chunk> splitVideo(Video video, Path videoFilePath) {
+    public List<Chunk> splitVideo(Video video, Path videoFilePath, Resolution resolution) {
 
         return List.of();
     }
