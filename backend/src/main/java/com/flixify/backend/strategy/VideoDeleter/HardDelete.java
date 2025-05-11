@@ -4,7 +4,7 @@ import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.VideoDeletedPermanently;
 import com.flixify.backend.model.Video;
 import com.flixify.backend.repository.VideoRepository;
-import com.flixify.backend.service.interfaces.VideoDeleter;
+import com.flixify.backend.service.interfaces.VideoDeleterService;
 import com.flixify.backend.util.LocalDisk;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.io.File;
 /**
  * Deletes the video meta and media permanently.
  */
-public class HardDelete implements VideoDeleter {
+public class HardDelete implements VideoDeleterService {
 
     private final VideoRepository videoRepository;
 

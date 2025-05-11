@@ -2,7 +2,7 @@ package com.flixify.backend.service.interfaces;
 
 import com.flixify.backend.model.Video;
 
-public interface VideoDeleter {
+public interface VideoDeleterService {
 
     public void delete(Video video);
 
