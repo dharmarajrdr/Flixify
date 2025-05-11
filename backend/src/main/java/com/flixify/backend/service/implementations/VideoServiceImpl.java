@@ -44,6 +44,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
+    public List<Video> getVideosInTrashByUserId(Integer userId) {
+
+        User owner = getUser(userId);
+        return videoRepository.findByIsDeletedTrueAndOwner(owner);
+    }
+
+    @Override
     public List<Video> getDeletedAndLastUpdatedAtBefore(LocalDateTime date) {
 
         return videoRepository.findByIsDeletedTrueAndLastUpdatedAtBefore(date);

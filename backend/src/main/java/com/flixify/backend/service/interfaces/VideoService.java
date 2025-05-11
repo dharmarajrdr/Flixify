@@ -17,6 +17,8 @@ public interface VideoService {
 
     public List<Video> getVideosByUserId(Integer userId);
 
+    public List<Video> getVideosInTrashByUserId(Integer userId);
+
     public List<Video> getDeletedAndLastUpdatedAtBefore(LocalDateTime date);
 
     public Video addVideo(AddVideoDto addVideoDto);

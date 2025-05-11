@@ -29,9 +29,24 @@ public class VideoController {
         List<Video> videos = videoService.getVideosByUserId(userId);
         List<VideoDto> videoDtos = new ArrayList<>();
         for (Video video : videos) {
+            if (video.isDeleted()) {
+                continue;
+            }
             videoDtos.add(VideoDto.fromVideo(video));
         }
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the videos of the given user.", videoDtos, null);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/trash")
+    public ResponseEntity<ResponseDto> getAllDeletedVideos(@RequestParam Integer userId) {
+
+        List<Video> deletedVideos = videoService.getVideosInTrashByUserId(userId);
+        List<VideoDto> videoDtos = new ArrayList<>();
+        for (Video video : deletedVideos) {
+            videoDtos.add(VideoDto.fromVideo(video));
+        }
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Fetched the videos from trash.", videoDtos, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -58,5 +73,5 @@ public class VideoController {
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Video recovered from trash successfully.", null, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
-    
+
 }
