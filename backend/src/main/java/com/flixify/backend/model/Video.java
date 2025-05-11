@@ -43,6 +43,10 @@ public class Video extends Auditable {
     @ManyToOne
     private VideoSplitterRule rule;
 
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<VideoUploadTaskLog> videoUploadTaskLogs;
+
     public boolean isOwner(User user) {
         return owner == user;
     }

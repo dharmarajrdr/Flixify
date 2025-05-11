@@ -1,5 +1,6 @@
 package com.flixify.backend.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -10,13 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MediaDownloads extends BaseModel {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Video video;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Chunk chunk;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Resolution resolution;
 
     private long downloads;
