@@ -1,96 +1,70 @@
-# 🎬 Flixify
+## 🎬 Flixify
 
-**Flixify** is a microservice-based video processing solution built with **Spring Boot**, **PostgreSQL**, and **React**. It allows OTT platforms to upload videos, split them into multiple resolutions, encode them, and retrieve a `manifest.json` for adaptive streaming.
+Flixify is a modular **microservice designed for video upload, transcoding, chunking, and adaptive streaming support**. It powers modern OTT platforms by processing uploaded videos into multiple resolutions and generating manifest files compatible with streaming protocols like HLS and MPEG-DASH.
 
----
+### 🚀 Features
 
-## 🚀 Features
+- 📥 Accept video uploads from users or administrators.
+- 🧩 Automatically split and encode uploaded videos into multiple resolutions (e.g., 1080p, 720p, 480p).
+- 📄 Generate manifest json for adaptive bitrate streaming.
+- 🗄️ Store and manage video/chunk metadata using PostgreSQL.
+- Tracking the status of video processing.
+- 📊 Provide access to download statistics and monitoring.
 
-### 📦 Backend (Spring Boot + PostgreSQL)
+### 🛠️ Tech Stack
 
-- Accept video uploads from users/admins
-- Split and encode videos into multiple resolutions (1080p, 720p, etc.)
-- Generate `manifest.json` for adaptive streaming protocols (e.g., HLS, MPEG-DASH)
-- Store metadata in PostgreSQL
-- Support API endpoints to:
-  - Upload videos
-  - Fetch video/chunk metadata
-  - Download manifest.json
-  - Delete videos or individual chunks
-  - View download statistics
-  - Invite and manage collaborators
-- Packaged as:
-  - A **microservice**
-  - A **distributable SDK/JAR** for OTT platforms to use on their own infrastructure
+- **Backend:** Spring Boot
+- **Database:** PostgreSQL
+- **File Storage:** Local disk
+- **Async Processing**: `@Async`, `@TransactionalEventListener`
 
-### 🖥️ Frontend (React)
+### 📦 Getting Started
 
-- Login and user authentication
-- Video upload interface
-- View uploaded videos and their chunk details
-- Download the manifest.json anytime
-- Delete videos or specific chunks
-- View chunk statistics (e.g., number of downloads)
-- Invite collaborators and manage shared access
+#### Prerequisites
 
----
+- Java 17+
+- Maven
+- PostgreSQL
+- FFmpeg installed
 
-## 📁 Tech Stack
-
-| Layer          | Technology                    |
-| -------------- | ----------------------------- |
-| Backend        | Spring Boot                   |
-| Database       | PostgreSQL                    |
-| Frontend       | React                         |
-| Video Engine   | FFmpeg                        |
-| Packaging      | Docker, JAR (for SDK)         |
-| Optional Tools | Kafka, Redis (future scaling) |
-
----
-
-## 📂 Input/Output
-
-- **Input:** Video file (uploaded via API or UI)
-- **Output:** `manifest.json` describing video resolutions and segments
-
----
-
-## 📦 Deployment Options
-
-- Deploy as a standalone microservice
-- Integrate into existing OTT infrastructure via provided SDK/JAR
-- Cloud-native friendly: can be containerized using Docker and orchestrated with Kubernetes
-
----
-
-## 📌 Use Case
-
-Flixify serves as a general-purpose video storage and processing service for OTT platforms. Think of it as your **video backend-as-a-service**, similar to AWS S3 but purpose-built for video encoding and adaptive streaming.
-
----
-
-## 🔜 Upcoming Features
-
-- Integration with CDN for faster delivery
-- WebSocket-based real-time encoding status
-- Role-based access controls
-- Advanced analytics dashboard
-- Multi-language subtitle support
-
----
-
-## 🧪 Development
-
-Want to contribute or extend this service?  
-Start with:
+#### Running Locally
 
 ```bash
-# Backend
-cd backend
-./mvnw spring-boot:run
+# Clone the repository
+git clone https://github.com/dharmarajrdr/Flixify.git
+cd Flixify/backend
 
-# Frontend
-cd frontend
-npm install
-npm start
+# Configure application.properties
+# Set DB credentials and local storage paths
+
+# Build and run the application
+mvn clean install
+mvn spring-boot:run
 ```
+
+Refer REST API endpoints [here](https://github.com/dharmarajrdr/Flixify/blob/master/REST_API.md).
+
+Refer Schema design [here](https://dbdiagram.io/d/Flixify-6708a04e97a66db9a39e2394).
+
+Refer project walkthrough [here](https://www.youtube.com/watch?v=0aX2g1v4k8A).
+
+### 📌 Notes
+
+- Async operations like chunking and encoding do not block HTTP response.
+
+- Designed to be **extensible** — supports custom splitter rules, distributed storage, CDN integration, and DRM module add-ons.
+
+## 🧑‍💻 Contributing
+
+Flixify's backend is ready — but we welcome **frontend developers** to join and help us build an intuitive UI!
+
+### How to Contribute
+
+1. **Fork** the repository
+2. **Create a feature branch**
+3. **Commit** your changes with clear messages
+4. **Push** to your fork and open a **pull request**
+
+Whether you're fixing bugs, improving the UI/UX, or adding new features — your contributions are appreciated!
+
+Feel free to reach out by opening a GitHub issue if you have any questions or ideas.
