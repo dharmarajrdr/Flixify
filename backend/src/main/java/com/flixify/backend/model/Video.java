@@ -47,6 +47,8 @@ public class Video extends Auditable {
     @JsonIgnore
     private List<VideoUploadTaskLog> videoUploadTaskLogs;
 
+    private boolean isDeleted;
+
     public boolean isOwner(User user) {
         return owner == user;
     }

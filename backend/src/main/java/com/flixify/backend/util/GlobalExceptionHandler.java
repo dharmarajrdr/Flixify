@@ -13,7 +13,6 @@ import com.flixify.backend.enums.ResponseStatusEnum;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     private ResponseEntity<ResponseDto> NOT_FOUND(RuntimeException e) {
 
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
@@ -26,8 +25,26 @@ public class GlobalExceptionHandler {
         return NOT_FOUND(e);
     }
 
+    @ExceptionHandler(VideoMissingInTrash.class)
+    public ResponseEntity<ResponseDto> videoMissingInTrash(VideoMissingInTrash e) {
+
+        return NOT_FOUND(e);
+    }
+
     @ExceptionHandler(ChunkMissing.class)
     public ResponseEntity<ResponseDto> chunkMissing(ChunkMissing e) {
+
+        return NOT_FOUND(e);
+    }
+
+    @ExceptionHandler(ChunkDoesNotExist.class)
+    public ResponseEntity<ResponseDto> chunkDoesNotExist(ChunkDoesNotExist e) {
+
+        return NOT_FOUND(e);
+    }
+
+    @ExceptionHandler(VideoAlreadyDeleted.class)
+    public ResponseEntity<ResponseDto> videoAlreadyDeleted(VideoAlreadyDeleted e) {
 
         return NOT_FOUND(e);
     }
@@ -46,6 +63,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResolutionNotFound.class)
     public ResponseEntity<ResponseDto> resolutionNotFound(ResolutionNotFound e) {
+
+        return NOT_FOUND(e);
+    }
+
+    @ExceptionHandler(StreamDeletedVideoException.class)
+    public ResponseEntity<ResponseDto> streamDeletedVideo(StreamDeletedVideoException e) {
 
         return NOT_FOUND(e);
     }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.flixify.backend.model.Video;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,7 +16,11 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
 
     public List<Video> findByOwner(User user);
 
+    public List<Video> findByIsDeletedTrueAndOwner(User user);
+
     public Optional<Video> findByFileId(UUID fileId);
 
     public Boolean existsByFileIdAndOwner(UUID fileId, User owner);
+
+    public List<Video> findByIsDeletedTrueAndLastUpdatedAtBefore(LocalDateTime cutoffDate);
 }

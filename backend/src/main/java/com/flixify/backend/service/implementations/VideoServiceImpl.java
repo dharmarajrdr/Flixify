@@ -1,12 +1,14 @@
 package com.flixify.backend.service.implementations;
 
-import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
+import com.flixify.backend.custom_exceptions.VideoAlreadyDeleted;
+import com.flixify.backend.custom_exceptions.VideoMissingInTrash;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.service.interfaces.UserService;
+import com.flixify.backend.service.interfaces.VideoDeleterService;
 import com.flixify.backend.service.interfaces.VideoService;
-import com.flixify.backend.util.LocalDisk;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
@@ -17,31 +19,44 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class VideoServiceImpl implements VideoService {
 
-    private final VideoRepository videoRepository;
     private final UserService userService;
-
-    public VideoServiceImpl(VideoRepository videoRepository, UserService userService) {
-        this.videoRepository = videoRepository;
-        this.userService = userService;
-    }
+    private final VideoDeleterService videoDeleterService;
+    private final VideoRepository videoRepository;
 
     private User getUser(Integer userId) {
 
         return userService.findUserById(userId);
     }
 
+    @Override
     public List<Video> getVideosByUserId(Integer userId) {
 
         User owner = getUser(userId);
         return videoRepository.findByOwner(owner);
     }
 
+    @Override
+    public List<Video> getVideosInTrashByUserId(Integer userId) {
+
+        User owner = getUser(userId);
+        return videoRepository.findByIsDeletedTrueAndOwner(owner);
+    }
+
+    @Override
+    public List<Video> getDeletedAndLastUpdatedAtBefore(LocalDateTime date) {
+
+        return videoRepository.findByIsDeletedTrueAndLastUpdatedAtBefore(date);
+    }
+
+    @Override
     public Video getVideo(Integer userId, UUID fileId) {
 
         User user = getUser(userId);
@@ -52,6 +67,7 @@ public class VideoServiceImpl implements VideoService {
         return video;
     }
 
+    @Override
     public Video addVideo(AddVideoDto addVideoDto) {
 
         Integer chunkCount = 0;
@@ -89,15 +105,24 @@ public class VideoServiceImpl implements VideoService {
         return Double.parseDouble(line.trim());
     }
 
+    @Override
     public void deleteVideo(Integer userId, UUID videoId) {
 
         Video video = getVideo(userId, videoId);
-        videoRepository.delete(video);
+        if(video.isDeleted()) {
+            throw new VideoAlreadyDeleted(video);
+        }
+        videoDeleterService.delete(video);
+    }
 
-        File rawVideoFile = new File(PathConfig.VIDEO_STORAGE_DIRECTORY + "/" + videoId.toString() + ".mp4");
-        File chunkFiles = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + videoId.toString());
-        LocalDisk.deleteFile(rawVideoFile.toPath());
-        LocalDisk.deleteDirectory(chunkFiles.toPath());
+    @Override
+    public void recoverVideo(Integer userId, UUID fileId) {
+
+        Video video = getVideo(userId, fileId);
+        if (!video.isDeleted()) {
+            throw new VideoMissingInTrash(video);
+        }
+        videoDeleterService.recover(video);
     }
 
     public Boolean isOwner(Integer userId, UUID fileId) {

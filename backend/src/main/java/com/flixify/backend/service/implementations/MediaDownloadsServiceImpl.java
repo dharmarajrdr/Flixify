@@ -2,6 +2,7 @@ package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.ChunkMissing;
+import com.flixify.backend.custom_exceptions.StreamDeletedVideoException;
 import com.flixify.backend.dto.response.ChunkDownloadDto;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.MediaDownloads;
@@ -53,6 +54,9 @@ public class MediaDownloadsServiceImpl implements MediaDownloadsService {
     public Resource getChunkFile(UUID fileId, Integer chunkId, Integer userId, String resolutionTitle) throws MalformedURLException {
 
         Video video = videoService.getVideo(userId, fileId);
+        if(video.isDeleted()) {
+            throw new StreamDeletedVideoException();
+        }
         Resolution resolution = resolutionService.getResolutionByTitle(resolutionTitle);
         chunkService.checkChunkWithResolutionExists(video, chunkId, resolution);
         Chunk chunk = chunkService.getChunkByVideoAndResolutionAndChunkId(video, resolution, chunkId).orElseThrow(() -> new ChunkMissing(fileId, chunkId));

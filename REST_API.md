@@ -45,11 +45,17 @@
 
 - **Response**: `200 OK` with video details.
 
-### Get All Videos for a User
+### Get All Videos of a User
 
 - **Method**: `GET`
 - **URL**: `/v1/api/video?userId=1`
 - **Response**: List of uploaded videos.
+
+### Get All Videos of a User in the trash
+
+- **Method**: `GET`
+- **URL**: `/v1/api/video/trash?userId=1`
+- **Response**: List of videos in the trash.
 
 ### Get Video Info
 
@@ -74,6 +80,12 @@
 - **Method**: `DELETE`
 - **URL**: `/v1/api/video/{videoId}?userId=1`
 - **Response**: Deletion confirmation.
+
+### Recover the deleted video
+
+- **Method**: `PUT`
+- **URL**: `/v1/api/video/recover/{videoId}?userId=1`
+- **Response**: Recovery confirmation.
 
 ---
 

@@ -2,9 +2,9 @@ package com.flixify.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.flixify.backend.config.TrashConstantsConfig;
 import com.flixify.backend.model.Chunk;
 import com.flixify.backend.model.Video;
-import com.flixify.backend.model.VideoSplitterRule;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,14 @@ public class VideoDto {
 
     private Integer chunkCount;
 
-    private VideoSplitterRule rule;
+    private String rule;
+
+    private boolean isDeleted;
+
+    private LocalDateTime expirationDate;
+
+    @JsonIgnore
+    private Integer trashCleanupCutoffDays = TrashConstantsConfig.TRASH_CLEANUP_CUTOFF_DAYS;
 
     public static VideoDto fromVideo(Video video) {
 
@@ -42,7 +49,12 @@ public class VideoDto {
         videoDto.setChunkCount(video.getChunkCount());
         videoDto.setChunks(video.getChunks());
         videoDto.setCreatedAt(video.getCreatedAt());
-        videoDto.setRule(video.getRule());
+        videoDto.setRule(video.getRule().getDescription());
+        if (video.isDeleted()) {
+            LocalDateTime expirationDate = video.getLastUpdatedAt().plusDays(videoDto.getTrashCleanupCutoffDays());
+            videoDto.setExpirationDate(expirationDate);
+            videoDto.setDeleted(video.isDeleted());
+        }
         return videoDto;
     }
 }
