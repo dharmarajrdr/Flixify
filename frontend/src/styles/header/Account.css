@@ -1,0 +1,12 @@
+#account img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition-duration: 0.25s;
+}
+
+#account img:hover {
+  border: 2px solid #ff8b99;
+}

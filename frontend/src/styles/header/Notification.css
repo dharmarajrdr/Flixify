@@ -1,0 +1,44 @@
+#notification {
+    margin-right: 20px;
+}
+
+#notificationIcon {
+  font-size: 22px;
+  margin-right: 20px;
+  margin-top: 10px;
+  color: gold;
+  animation: notifyBellWave 1s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+#notificationCount {
+    background-color: red;
+    color: white;
+    border-radius: 100%;
+    z-index: 1;
+    padding: 3px 4px 3px 3px;
+    font-size: 10px;
+    top: -14px;
+    right: -28px;
+    position: relative;
+    cursor: pointer;
+}
+
+@keyframes notifyBellWave {
+  0% {
+    transform: rotate(0deg);
+    transform-origin: top center;
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
