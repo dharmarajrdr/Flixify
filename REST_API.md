@@ -75,6 +75,12 @@
 - **URL**: `/v1/api/video/{videoId}?userId=1`
 - **Response**: Deletion confirmation.
 
+### Recover the deleted video
+
+- **Method**: `PUT`
+- **URL**: `/v1/api/video/recover/{videoId}?userId=1`
+- **Response**: Recovery confirmation.
+
 ---
 
 ## 📄 Manifest API
