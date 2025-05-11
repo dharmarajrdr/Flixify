@@ -1,12 +1,11 @@
 package com.flixify.backend.service.implementations;
 
-import com.flixify.backend.config.PathConfig;
 import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.service.interfaces.UserService;
+import com.flixify.backend.service.interfaces.VideoDeleter;
 import com.flixify.backend.service.interfaces.VideoService;
-import com.flixify.backend.util.LocalDisk;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
@@ -23,12 +22,14 @@ import java.util.UUID;
 @Service
 public class VideoServiceImpl implements VideoService {
 
-    private final VideoRepository videoRepository;
     private final UserService userService;
+    private final VideoDeleter videoDeleter;
+    private final VideoRepository videoRepository;
 
-    public VideoServiceImpl(VideoRepository videoRepository, UserService userService) {
-        this.videoRepository = videoRepository;
+    public VideoServiceImpl(VideoRepository videoRepository, UserService userService, VideoDeleter videoDeleter) {
         this.userService = userService;
+        this.videoDeleter = videoDeleter;
+        this.videoRepository = videoRepository;
     }
 
     private User getUser(Integer userId) {
@@ -92,12 +93,7 @@ public class VideoServiceImpl implements VideoService {
     public void deleteVideo(Integer userId, UUID videoId) {
 
         Video video = getVideo(userId, videoId);
-        videoRepository.delete(video);
-
-        File rawVideoFile = new File(PathConfig.VIDEO_STORAGE_DIRECTORY + "/" + videoId.toString() + ".mp4");
-        File chunkFiles = new File(PathConfig.CHUNK_STORAGE_DIRECTORY + "/" + videoId.toString());
-        LocalDisk.deleteFile(rawVideoFile.toPath());
-        LocalDisk.deleteDirectory(chunkFiles.toPath());
+        videoDeleter.delete(video);
     }
 
     public Boolean isOwner(Integer userId, UUID fileId) {
