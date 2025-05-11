@@ -1,0 +1,32 @@
+#navigation {
+  margin-left: 50px;
+}
+
+#navigation a {
+  color: rgba(224, 224, 224, 0.75);
+  padding: 8px 20px;
+  cursor: default;
+  margin: 0px 10px;
+  border-radius: 10px;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+
+#navigation a i {
+  padding-right: 7px;
+}
+
+#navigation a:not(.activeNavigation):hover {
+  color: #fff;
+  cursor: pointer;
+}
+
+#navigation .activeNavigation {
+  background-color: #dbd5e6;
+  color: #14142e;
+}
+
+@media screen and (max-width: 760px) {
+  #navigation {
+    display: none;
+  }
+}
