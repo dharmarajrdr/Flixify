@@ -32,6 +32,8 @@ public class VideoDto {
 
     private String rule;
 
+    private boolean isDeleted;
+
     private LocalDateTime expirationDate;
 
     @JsonIgnore
@@ -51,6 +53,7 @@ public class VideoDto {
         if (video.isDeleted()) {
             LocalDateTime expirationDate = video.getLastUpdatedAt().plusDays(videoDto.getTrashCleanupCutoffDays());
             videoDto.setExpirationDate(expirationDate);
+            videoDto.setDeleted(video.isDeleted());
         }
         return videoDto;
     }
