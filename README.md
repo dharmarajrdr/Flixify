@@ -11,12 +11,16 @@ Flixify is a modular **microservice designed for video upload, transcoding, chun
 - Tracking the status of video processing.
 - 📊 Provide access to download statistics and monitoring.
 
+---
+
 ### 🛠️ Tech Stack
 
 - **Backend:** Spring Boot
 - **Database:** PostgreSQL
 - **File Storage:** Local disk
 - **Async Processing**: `@Async`, `@TransactionalEventListener`
+
+---
 
 ### 📦 Getting Started
 
@@ -48,17 +52,19 @@ Refer Schema design [here](https://dbdiagram.io/d/Flixify-6708a04e97a66db9a39e23
 
 Refer project walkthrough [here](https://www.youtube.com/watch?v=0aX2g1v4k8A).
 
+---
+
 ### 📌 Notes
-
 - Async operations like chunking and encoding do not block HTTP response.
-
 - Designed to be **extensible** — supports custom splitter rules, distributed storage, CDN integration, and DRM module add-ons.
 
-## 🧑‍💻 Contributing
+---
+
+### 🧑‍💻 Contributing
 
 Flixify's backend is ready — but we welcome **frontend developers** to join and help us build an intuitive UI!
 
-### How to Contribute
+#### How to Contribute
 
 1. **Fork** the repository
 2. **Create a feature branch**
