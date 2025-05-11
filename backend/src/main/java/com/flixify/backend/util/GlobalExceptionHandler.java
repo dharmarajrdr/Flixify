@@ -37,6 +37,12 @@ public class GlobalExceptionHandler {
         return NOT_FOUND(e);
     }
 
+    @ExceptionHandler(ChunkDoesNotExist.class)
+    public ResponseEntity<ResponseDto> chunkDoesNotExist(ChunkDoesNotExist e) {
+
+        return NOT_FOUND(e);
+    }
+
     @ExceptionHandler(VideoAlreadyDeleted.class)
     public ResponseEntity<ResponseDto> videoAlreadyDeleted(VideoAlreadyDeleted e) {
 
