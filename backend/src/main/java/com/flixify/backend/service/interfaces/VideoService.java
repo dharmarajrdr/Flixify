@@ -13,15 +13,17 @@ public interface VideoService {
 
     public Boolean isOwner(Integer userId, UUID fileId);
 
-    public void deleteVideo(Integer userId, UUID videoId);
-
-    public Video addVideo(AddVideoDto addVideoDto);
-
-    public Video getVideo(Integer userId, UUID fileId);
-
     public double getVideoDuration(File file) throws IOException, InterruptedException;
 
     public List<Video> getVideosByUserId(Integer userId);
 
     public List<Video> getDeletedAndLastUpdatedAtBefore(LocalDateTime date);
+
+    public Video addVideo(AddVideoDto addVideoDto);
+
+    public Video getVideo(Integer userId, UUID fileId);
+
+    public void deleteVideo(Integer userId, UUID videoId);
+
+    public void recoverVideo(Integer userId, UUID fileId);
 }

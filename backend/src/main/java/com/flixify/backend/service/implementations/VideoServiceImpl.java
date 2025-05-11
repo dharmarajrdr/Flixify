@@ -1,6 +1,7 @@
 package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.custom_exceptions.PermissionDenied;
+import com.flixify.backend.custom_exceptions.VideoMissingInTrash;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.service.interfaces.UserService;
@@ -101,6 +102,16 @@ public class VideoServiceImpl implements VideoService {
 
         Video video = getVideo(userId, videoId);
         videoDeleterService.delete(video);
+    }
+
+    @Override
+    public void recoverVideo(Integer userId, UUID fileId) {
+
+        Video video = getVideo(userId, fileId);
+        if (!video.isDeleted()) {
+            throw new VideoMissingInTrash(video);
+        }
+        videoDeleterService.recover(video);
     }
 
     public Boolean isOwner(Integer userId, UUID fileId) {

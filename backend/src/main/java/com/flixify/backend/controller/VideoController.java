@@ -50,5 +50,13 @@ public class VideoController {
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Deleted the video.", null, null);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @PutMapping("/recover/{fileId}")
+    public ResponseEntity<ResponseDto> recoverVideo(@RequestParam Integer userId, @PathVariable UUID fileId) {
+
+        videoService.recoverVideo(userId, fileId);
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.SUCCESS, "Video recovered from trash successfully.", null, null);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
     
 }
