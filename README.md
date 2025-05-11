@@ -5,10 +5,10 @@ Flixify is a modular **microservice designed for video upload, transcoding, chun
 ### 🚀 Features
 
 - 📥 Accept video uploads from users or administrators.
-- 🧩 Automatically split and encode uploaded videos into multiple resolutions (e.g., 1080p, 720p, 480p).
+- 🧩 Automatically split and encode uploaded videos into multiple resolutions (e.g., 1080p, 720p, 480p,..).
 - 📄 Generate manifest json for adaptive bitrate streaming.
 - 🗄️ Store and manage video/chunk metadata using PostgreSQL.
-- Tracking the status of video processing.
+- 💬 Tracking the status of video processing.
 - 📊 Provide access to download statistics and monitoring.
 
 ---
@@ -19,6 +19,21 @@ Flixify is a modular **microservice designed for video upload, transcoding, chun
 - **Database:** PostgreSQL
 - **File Storage:** Local disk
 - **Async Processing**: `@Async`, `@TransactionalEventListener`
+
+---
+
+### 📚 Important Resources
+
+Here are some essential documents and references to help you get started with Flixify:
+
+- 🔗 [**REST API Documentation**](https://github.com/dharmarajrdr/Flixify/blob/master/REST_API.md)  
+  Comprehensive list of all endpoints including request/response formats.
+
+- 🧩 [**Database Schema Design**](https://dbdiagram.io/d/Flixify-6708a04e97a66db9a39e2394)  
+  Entity-relationship model and table structures used in Flixify.
+
+- 🚀 [**Project Walkthrough**](https://www.youtube.com/watch?v=0aX2g1v4k8A)  
+  Step-by-step explanation of the architecture, upload-to-streaming flow, async processing, and more.
 
 ---
 
@@ -46,15 +61,10 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-Refer REST API endpoints [here](https://github.com/dharmarajrdr/Flixify/blob/master/REST_API.md).
-
-Refer Schema design [here](https://dbdiagram.io/d/Flixify-6708a04e97a66db9a39e2394).
-
-Refer project walkthrough [here](https://www.youtube.com/watch?v=0aX2g1v4k8A).
-
 ---
 
 ### 📌 Notes
+
 - Async operations like chunking and encoding do not block HTTP response.
 - Designed to be **extensible** — supports custom splitter rules, distributed storage, CDN integration, and DRM module add-ons.
 
@@ -62,7 +72,9 @@ Refer project walkthrough [here](https://www.youtube.com/watch?v=0aX2g1v4k8A).
 
 ### 🧑‍💻 Contributing
 
-Flixify's backend is ready — but we welcome **frontend developers** to join and help us build an intuitive UI!
+```java
+throw new LookingForContributorsException("We need frontend developers to build an intuitive UI for Flixify!");
+```
 
 #### How to Contribute
 
@@ -74,3 +86,13 @@ Flixify's backend is ready — but we welcome **frontend developers** to join an
 Whether you're fixing bugs, improving the UI/UX, or adding new features — your contributions are appreciated!
 
 Feel free to reach out by opening a GitHub issue if you have any questions or ideas.
+
+---
+
+### 🤝 Acknowledgments
+
+Special thanks to all contributors and supporters. Let's make collaboration better together!
+
+---
+
+❤️ Thank you for checking out Flixify! We hope you find it helpful and engaging.
