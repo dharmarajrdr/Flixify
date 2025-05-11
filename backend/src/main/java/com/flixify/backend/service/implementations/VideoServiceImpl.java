@@ -4,7 +4,7 @@ import com.flixify.backend.custom_exceptions.PermissionDenied;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.service.interfaces.UserService;
-import com.flixify.backend.service.interfaces.VideoDeleter;
+import com.flixify.backend.service.interfaces.VideoDeleterService;
 import com.flixify.backend.service.interfaces.VideoService;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,12 +24,12 @@ import java.util.UUID;
 public class VideoServiceImpl implements VideoService {
 
     private final UserService userService;
-    private final VideoDeleter videoDeleter;
+    private final VideoDeleterService videoDeleterService;
     private final VideoRepository videoRepository;
 
-    public VideoServiceImpl(VideoRepository videoRepository, UserService userService, VideoDeleter videoDeleter) {
+    public VideoServiceImpl(VideoRepository videoRepository, UserService userService, VideoDeleterService videoDeleterService) {
         this.userService = userService;
-        this.videoDeleter = videoDeleter;
+        this.videoDeleterService = videoDeleterService;
         this.videoRepository = videoRepository;
     }
 
@@ -41,6 +42,12 @@ public class VideoServiceImpl implements VideoService {
 
         User owner = getUser(userId);
         return videoRepository.findByOwner(owner);
+    }
+
+    @Override
+    public List<Video> getDeletedAndLastUpdatedAtBefore(LocalDateTime date) {
+
+        return videoRepository.findByIsDeletedTrueAndLastUpdatedAtBefore(date);
     }
 
     public Video getVideo(Integer userId, UUID fileId) {
@@ -93,7 +100,7 @@ public class VideoServiceImpl implements VideoService {
     public void deleteVideo(Integer userId, UUID videoId) {
 
         Video video = getVideo(userId, videoId);
-        videoDeleter.delete(video);
+        videoDeleterService.delete(video);
     }
 
     public Boolean isOwner(Integer userId, UUID fileId) {
