@@ -8,13 +8,19 @@ import org.springframework.stereotype.Component;
 public class TrashConstantsConfig {
 
     @Value("${trash.cleanup.delete.cutoff-days}")
-    private int trashCleanupCutoffDays;
+    private int trashCleanupDeleteCutoffDays;
 
-    public static Integer TRASH_CLEANUP_CUTOFF_DAYS;
+    @Value("${trash.cleanup.warn.cutoff-days}")
+    private int trashCleanupWarningCutoffDays;
+
+    public static Integer TRASH_CLEANUP_DELETE_CUTOFF_DAYS;
+
+    public static Integer TRASH_CLEANUP_WARN_CUTOFF_DAYS;
 
     @PostConstruct
     public void init() {
 
-        TRASH_CLEANUP_CUTOFF_DAYS = trashCleanupCutoffDays;
+        TRASH_CLEANUP_DELETE_CUTOFF_DAYS = trashCleanupDeleteCutoffDays;
+        TRASH_CLEANUP_WARN_CUTOFF_DAYS = trashCleanupWarningCutoffDays;
     }
 }

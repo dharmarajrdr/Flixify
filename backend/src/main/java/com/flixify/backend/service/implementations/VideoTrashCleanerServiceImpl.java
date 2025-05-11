@@ -1,5 +1,6 @@
 package com.flixify.backend.service.implementations;
 
+import com.flixify.backend.config.TrashConstantsConfig;
 import com.flixify.backend.dto.NotificationDTO;
 import com.flixify.backend.model.User;
 import com.flixify.backend.model.Video;
@@ -8,7 +9,6 @@ import com.flixify.backend.service.interfaces.TrashCleanerService;
 import com.flixify.backend.service.interfaces.VideoDeleterService;
 import com.flixify.backend.service.interfaces.VideoService;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,8 @@ public class VideoTrashCleanerServiceImpl implements TrashCleanerService {
     private final NotificationService notificationService;
     private final VideoDeleterService videoDeleterService;
 
-    @Value("${trash.cleanup.delete.cutoff-daya}")
-    private static Integer TRASH_CLEANUP_DELETE_CUTOFF_DAYS;
-
-    @Value("${trash.cleanup.warn.cutoff-days}")
-    private static Integer TRASH_CLEANUP_WARN_CUTOFF_DAYS;
+    private static final Integer TRASH_CLEANUP_WARN_CUTOFF_DAYS = TrashConstantsConfig.TRASH_CLEANUP_WARN_CUTOFF_DAYS;
+    private static final Integer TRASH_CLEANUP_DELETE_CUTOFF_DAYS = TrashConstantsConfig.TRASH_CLEANUP_DELETE_CUTOFF_DAYS;
 
     public VideoTrashCleanerServiceImpl(@Qualifier("hardDelete") VideoDeleterService videoDeleterService, @Qualifier("emailNotificationService") NotificationService notificationService, VideoService videoService) {
         this.videoService = videoService;
