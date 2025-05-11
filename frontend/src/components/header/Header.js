@@ -13,7 +13,7 @@ const Header = () => {
         <div className='flex items-center justify-between' id='header'>
             <Logo />
             {isLoggedIn ?
-                <div className='flex items-center justify-between px-5 py-2'>
+                <div className='flex items-center justify-between py-2'>
                     <Notification />
                     <Account />
                 </div> :
