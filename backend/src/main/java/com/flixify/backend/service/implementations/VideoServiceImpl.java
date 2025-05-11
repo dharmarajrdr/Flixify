@@ -1,12 +1,14 @@
 package com.flixify.backend.service.implementations;
 
 import com.flixify.backend.custom_exceptions.PermissionDenied;
+import com.flixify.backend.custom_exceptions.VideoAlreadyDeleted;
 import com.flixify.backend.custom_exceptions.VideoMissingInTrash;
 import com.flixify.backend.custom_exceptions.VideoNotExist;
 import com.flixify.backend.dto.request.AddVideoDto;
 import com.flixify.backend.service.interfaces.UserService;
 import com.flixify.backend.service.interfaces.VideoDeleterService;
 import com.flixify.backend.service.interfaces.VideoService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.flixify.backend.model.User;
@@ -22,23 +24,19 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class VideoServiceImpl implements VideoService {
 
     private final UserService userService;
     private final VideoDeleterService videoDeleterService;
     private final VideoRepository videoRepository;
 
-    public VideoServiceImpl(VideoRepository videoRepository, UserService userService, VideoDeleterService videoDeleterService) {
-        this.userService = userService;
-        this.videoDeleterService = videoDeleterService;
-        this.videoRepository = videoRepository;
-    }
-
     private User getUser(Integer userId) {
 
         return userService.findUserById(userId);
     }
 
+    @Override
     public List<Video> getVideosByUserId(Integer userId) {
 
         User owner = getUser(userId);
@@ -51,6 +49,7 @@ public class VideoServiceImpl implements VideoService {
         return videoRepository.findByIsDeletedTrueAndLastUpdatedAtBefore(date);
     }
 
+    @Override
     public Video getVideo(Integer userId, UUID fileId) {
 
         User user = getUser(userId);
@@ -61,6 +60,7 @@ public class VideoServiceImpl implements VideoService {
         return video;
     }
 
+    @Override
     public Video addVideo(AddVideoDto addVideoDto) {
 
         Integer chunkCount = 0;
@@ -98,9 +98,13 @@ public class VideoServiceImpl implements VideoService {
         return Double.parseDouble(line.trim());
     }
 
+    @Override
     public void deleteVideo(Integer userId, UUID videoId) {
 
         Video video = getVideo(userId, videoId);
+        if(video.isDeleted()) {
+            throw new VideoAlreadyDeleted(video);
+        }
         videoDeleterService.delete(video);
     }
 

@@ -38,6 +38,12 @@ public class GlobalExceptionHandler {
         return NOT_FOUND(e);
     }
 
+    @ExceptionHandler(VideoAlreadyDeleted.class)
+    public ResponseEntity<ResponseDto> videoAlreadyDeleted(VideoAlreadyDeleted e) {
+
+        return NOT_FOUND(e);
+    }
+
     @ExceptionHandler(AccountNotFound.class)
     public ResponseEntity<ResponseDto> accountNotFound(AccountNotFound e) {
 
