@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return NOT_FOUND(e);
     }
 
+    @ExceptionHandler(VideoMissingInTrash.class)
+    public ResponseEntity<ResponseDto> videoMissingInTrash(VideoMissingInTrash e) {
+
+        return NOT_FOUND(e);
+    }
+
     @ExceptionHandler(ChunkMissing.class)
     public ResponseEntity<ResponseDto> chunkMissing(ChunkMissing e) {
 
