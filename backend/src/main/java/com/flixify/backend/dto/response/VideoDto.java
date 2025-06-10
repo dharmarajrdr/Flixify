@@ -37,7 +37,7 @@ public class VideoDto {
     private LocalDateTime expirationDate;
 
     @JsonIgnore
-    private Integer trashCleanupCutoffDays = TrashConstantsConfig.TRASH_CLEANUP_CUTOFF_DAYS;
+    private Integer trashCleanupCutoffDays = TrashConstantsConfig.TRASH_CLEANUP_DELETE_CUTOFF_DAYS;
 
     public static VideoDto fromVideo(Video video) {
 
