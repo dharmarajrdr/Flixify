@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.flixify.backend.dto.response.ResponseDto;
 import com.flixify.backend.enums.ResponseStatusEnum;
 
+import java.io.NotSerializableException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -100,5 +102,12 @@ public class GlobalExceptionHandler {
         String message = DataIntegrityViolationExceptionParser.parse(e);
         ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, message);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDto);
+    }
+
+    @ExceptionHandler(NotSerializableException.class)
+    public ResponseEntity<ResponseDto> notSerializable(NotSerializableException e) {
+
+        ResponseDto responseDto = new ResponseDto(ResponseStatusEnum.FAILURE, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
     }
 }
